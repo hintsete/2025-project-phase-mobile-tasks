@@ -8,7 +8,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  double priceValue = 50;
+  RangeValues _priceRange = const RangeValues(10, 90);
 
   @override
   Widget build(BuildContext context) {
@@ -17,20 +17,22 @@ class _SearchPageState extends State<SearchPage> {
       body: SafeArea(
         child: Column(
           children: [
-            
+            // Top Search Bar
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
                   Stack(
                     alignment: Alignment.center,
-                    children:  [
+                    children: [
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back_ios,size: 20,)),
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.arrow_back_ios, size: 20),
+                        ),
                       ),
-                      
-                      Center(
+                      const Center(
                         child: Text(
                           "Search Product",
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
@@ -74,7 +76,7 @@ class _SearchPageState extends State<SearchPage> {
 
             const SizedBox(height: 8),
 
-            
+            // Product List
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -88,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
 
-            
+            // Filter Section
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -102,7 +104,6 @@ class _SearchPageState extends State<SearchPage> {
                   const SizedBox(height: 8),
                   TextField(
                     decoration: InputDecoration(
-                      
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -110,15 +111,36 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
+
                   const Text("Price", style: TextStyle(fontWeight: FontWeight.w500)),
-                  Slider(
-                    value: priceValue,
-                    onChanged: (val) => setState(() => priceValue = val),
-                    min: 0,
-                    max: 100,
-                    activeColor: Colors.blueAccent,
-                    inactiveColor: Colors.grey.shade300,
+                  const SizedBox(height: 8),
+
+                  // Green Bordered RangeSlider
+                  Container(
+                    // decoration: BoxDecoration(
+                    
+                    //   borderRadius: BorderRadius.circular(4),
+                    // ),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: RangeSlider(
+                      values: _priceRange,
+                      min: 0,
+                      max: 100,
+                      // divisions: 10,
+                      activeColor: Colors.blueAccent,
+                      inactiveColor: Colors.grey.shade300,
+                      labels: RangeLabels(
+                        _priceRange.start.round().toString(),
+                        _priceRange.end.round().toString(),
+                      ),
+                      onChanged: (RangeValues values) {
+                        setState(() {
+                          _priceRange = values;
+                        });
+                      },
+                    ),
                   ),
+
                   const SizedBox(height: 8),
                   SizedBox(
                     width: double.infinity,
