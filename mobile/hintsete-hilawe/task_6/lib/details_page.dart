@@ -26,8 +26,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
-                      "images/shoe.jpg",
-                      height: 240,
+                      "images/Saint-Laurent.jpg",
+                      height: 340,
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
@@ -41,7 +41,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                        icon: const Icon(Icons.arrow_back_ios, color: Colors.blueAccent),
                       ),
                     ),
                   ),
@@ -53,12 +53,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: const [
-                  Text("Men's shoe", style: TextStyle(color: Colors.grey)),
+                  Text("Luxury Handbag", style: TextStyle(color: Colors.grey,fontSize: 16)),
                   Row(
                     children: [
                       Icon(Icons.star, size: 24, color: Colors.amber),
                       SizedBox(width: 4),
-                      Text('(4.0)', style: TextStyle(color: Colors.grey)),
+                      Text('(4.0)', style: TextStyle(color: Colors.grey,fontSize: 16)),
                     ],
                   ),
                 ],
@@ -70,8 +70,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: const [
-                  Text("Derby Leather", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text("\$120", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("Saint Laurent Bag", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                  Text("\$120", style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16)),
                 ],
               ),
 
@@ -126,12 +126,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
               
               const Text(
-                "A derby leather shoe is a classic and versatile footwear option characterized by its open lacing system, where the shoelace eyelets are sewn on top of the vamp. "
-                "This design provides a more relaxed and casual look compared to oxford shoes. They're made from high-quality leather, known for durability and elegance.",
-                style: TextStyle(fontSize: 14, color: Colors.black45,fontFamily: "Poppins",fontWeight: FontWeight.w500,  ),
+                "The Saint Laurent bag embodies timeless elegance and modern sophistication. "
+                "Crafted from premium materials, it features a sleek design with meticulous detailing, "
+                "making it a perfect accessory for both casual and formal occasions. Renowned for its luxury and durability, "
+                "this bag is a staple in high-end fashion.",
+                style: TextStyle(fontSize: 16, color: Colors.black45,fontFamily: "Poppins",fontWeight: FontWeight.w500,  ),
               ),
 
-              const SizedBox(height: 72),
+              const SizedBox(height: 36),
 
               
               Row(

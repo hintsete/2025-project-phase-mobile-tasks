@@ -13,6 +13,7 @@ class HomePage extends StatelessWidget {
         },
         backgroundColor: Colors.blue,
         shape: const CircleBorder(),
+        
         child: const Icon(
           Icons.add,
           color: Colors.white,
@@ -128,9 +129,9 @@ class HomePage extends StatelessWidget {
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: Image.asset(
-              'images/shoe.jpg', 
+              'images/Saint-Laurent.jpg', 
               fit: BoxFit.cover,
-              height: 160,
+              height: 280,
               width: double.infinity,
             ),
           ),
@@ -146,7 +147,7 @@ class HomePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
                     Text(
-                      'Derby Leather Shoes',
+                      'Saint Laurent Bag',
                       style: TextStyle(fontWeight: FontWeight.bold,fontFamily: "Poppins"),
                     ),
                     Text(
@@ -160,7 +161,7 @@ class HomePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
-                    Text("Men's shoe", style: TextStyle(color: Colors.grey,fontFamily: "Poppins")),
+                    Text("Luxury Handbag", style: TextStyle(color: Colors.grey,fontFamily: "Poppins")),
                     Row(
                       children: [
                         Icon(Icons.star, size: 16, color: Colors.amber),

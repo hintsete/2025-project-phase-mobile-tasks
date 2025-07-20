@@ -55,7 +55,7 @@ class AddUpdatePage extends StatelessWidget {
                 maxLines: 3
               ),
 
-              const SizedBox(height: 18),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 height:48 ,
@@ -69,7 +69,7 @@ class AddUpdatePage extends StatelessWidget {
                  child: const Text("ADD",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontFamily: "Poppins"),)),
               ),
 
-              const SizedBox(height: 16,),
+              const SizedBox(height: 24,),
               SizedBox(
                 width: double.infinity,
                 height: 48,

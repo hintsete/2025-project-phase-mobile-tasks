@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:task_6/details_page.dart';
+import 'package:task_6/home_page.dart';
 // import 'package:task_6/details_page.dart';
 import 'package:task_6/search_page.dart';
 // import 'package:task_6/home_page.dart';

@@ -17,7 +17,7 @@ class _SearchPageState extends State<SearchPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // Top Search Bar
+            
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -29,7 +29,7 @@ class _SearchPageState extends State<SearchPage> {
                         alignment: Alignment.centerLeft,
                         child: IconButton(
                           onPressed: () {},
-                          icon: const Icon(Icons.arrow_back_ios, size: 20),
+                          icon: const Icon(Icons.arrow_back_ios, size: 20,color: Colors.blueAccent,),
                         ),
                       ),
                       const Center(
@@ -47,7 +47,7 @@ class _SearchPageState extends State<SearchPage> {
                         child: TextField(
                           decoration: InputDecoration(
                             hintText: "Leather",
-                            suffixIcon: const Icon(Icons.arrow_forward),
+                            suffixIcon: const Icon(Icons.arrow_forward,color: Colors.blueAccent,),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -76,7 +76,7 @@ class _SearchPageState extends State<SearchPage> {
 
             const SizedBox(height: 8),
 
-            // Product List
+    
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -90,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
 
-            // Filter Section
+          
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -100,11 +100,11 @@ class _SearchPageState extends State<SearchPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Category", style: TextStyle(fontWeight: FontWeight.w500)),
+                  const Text("Category", style: TextStyle(fontWeight: FontWeight.w500,fontSize: 16)),
                   const SizedBox(height: 8),
                   TextField(
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -112,15 +112,11 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  const Text("Price", style: TextStyle(fontWeight: FontWeight.w500)),
+                  const Text("Price", style: TextStyle(fontWeight: FontWeight.w500,fontSize: 16)),
                   const SizedBox(height: 8),
 
-                  // Green Bordered RangeSlider
                   Container(
-                    // decoration: BoxDecoration(
-                    
-                    //   borderRadius: BorderRadius.circular(4),
-                    // ),
+                   
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: RangeSlider(
                       values: _priceRange,
@@ -183,8 +179,8 @@ class _SearchPageState extends State<SearchPage> {
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: Image.asset(
-              'images/shoe.jpg',
-              height: 140,
+              'images/Saint-Laurent.jpg',
+              height: 360,
               width: double.infinity,
               fit: BoxFit.cover,
             ),
@@ -195,11 +191,11 @@ class _SearchPageState extends State<SearchPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Derby Leather Shoes",
+                  "Saint Laurent Bag",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 const SizedBox(height: 4),
-                const Text("Men's shoe", style: TextStyle(color: Colors.grey)),
+                const Text("Luxury Handbag", style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
