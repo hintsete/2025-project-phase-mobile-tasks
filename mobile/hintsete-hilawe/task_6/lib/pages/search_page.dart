@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:task_6/models/product.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -8,7 +10,64 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  RangeValues _priceRange = const RangeValues(10, 90);
+  List<Product> _allProducts = [];
+  List<Product> _filteredProducts = [];
+  RangeValues _priceRange = const RangeValues(0, 100);
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
+
+
+  Map<String, String> _productCategories = {
+    'p1': 'Leather',
+    'p2': 'Shoes',
+    'p3': 'Bags',
+    'p4': 'Accessories',
+    
+  };
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments as Map?;
+    if (args != null && args['products'] != null) {
+      _allProducts = List<Product>.from(args['products']);
+      _filteredProducts = List<Product>.from(_allProducts);
+      _filterProducts();
+    }
+  }
+
+  void _filterProducts() {
+    final searchQuery = _searchController.text.toLowerCase().trim();
+    final categoryQuery = _categoryController.text.toLowerCase().trim();
+
+    setState(() {
+      _filteredProducts = _allProducts.where((product) {
+        final matchesTitle = product.title.toLowerCase().contains(searchQuery);
+        final inPriceRange =
+            product.price >= _priceRange.start && product.price <= _priceRange.end;
+
+        final productCategory = _productCategories[product.id]?.toLowerCase() ?? '';
+
+        final matchesCategory = categoryQuery.isEmpty
+            ? true
+            : productCategory.contains(categoryQuery);
+
+        if (searchQuery.isEmpty && categoryQuery.isEmpty) {
+          return inPriceRange;
+        } else if (searchQuery.isNotEmpty && categoryQuery.isEmpty) {
+          return matchesTitle && inPriceRange;
+        } else if (searchQuery.isEmpty && categoryQuery.isNotEmpty) {
+          return matchesCategory && inPriceRange;
+        } else {
+          return matchesTitle && matchesCategory && inPriceRange;
+        }
+      }).toList();
+
+      if (_filteredProducts.isEmpty) {
+        _filteredProducts = List<Product>.from(_allProducts);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +76,7 @@ class _SearchPageState extends State<SearchPage> {
       body: SafeArea(
         child: Column(
           children: [
-            
+     
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -28,8 +87,8 @@ class _SearchPageState extends State<SearchPage> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.arrow_back_ios, size: 20,color: Colors.blueAccent,),
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.arrow_back_ios, size: 20, color: Colors.blueAccent),
                         ),
                       ),
                       const Center(
@@ -45,9 +104,16 @@ class _SearchPageState extends State<SearchPage> {
                     children: [
                       Expanded(
                         child: TextField(
+                          controller: _searchController,
+                          onChanged: (_) {
+                            
+                          },
                           decoration: InputDecoration(
-                            hintText: "Leather",
-                            suffixIcon: const Icon(Icons.arrow_forward,color: Colors.blueAccent,),
+                            hintText: "Search by title...",
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.search, color: Colors.blueAccent),
+                              onPressed: _filterProducts,
+                            ),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -65,7 +131,7 @@ class _SearchPageState extends State<SearchPage> {
                         ),
                         child: IconButton(
                           icon: const Icon(Icons.filter_list, color: Colors.white, size: 20),
-                          onPressed: () {},
+                          onPressed: _filterProducts,
                         ),
                       ),
                     ],
@@ -76,21 +142,19 @@ class _SearchPageState extends State<SearchPage> {
 
             const SizedBox(height: 8),
 
-    
+        
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: 2,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: _buildProductCard(),
-                  );
-                },
-              ),
+              child: _filteredProducts.isEmpty
+                  ? const Center(child: Text("No products found"))
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: _filteredProducts.length,
+                      itemBuilder: (context, index) {
+                        return _buildProductCard(_filteredProducts[index]);
+                      },
+                    ),
             ),
 
-          
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -100,10 +164,13 @@ class _SearchPageState extends State<SearchPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Category", style: TextStyle(fontWeight: FontWeight.w500,fontSize: 16)),
+                  // Category input
+                  const Text("Category", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _categoryController,
                     decoration: InputDecoration(
+                      hintText: "Enter category...",
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -112,37 +179,33 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  const Text("Price", style: TextStyle(fontWeight: FontWeight.w500,fontSize: 16)),
+  
+                  const Text("Price", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
                   const SizedBox(height: 8),
-
-                  Container(
-                   
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: RangeSlider(
-                      values: _priceRange,
-                      min: 0,
-                      max: 100,
-                      // divisions: 10,
-                      activeColor: Colors.blueAccent,
-                      inactiveColor: Colors.grey.shade300,
-                      labels: RangeLabels(
-                        _priceRange.start.round().toString(),
-                        _priceRange.end.round().toString(),
-                      ),
-                      onChanged: (RangeValues values) {
-                        setState(() {
-                          _priceRange = values;
-                        });
-                      },
+                  RangeSlider(
+                    values: _priceRange,
+                    min: 0,
+                    max: 100,
+                    activeColor: Colors.blueAccent,
+                    inactiveColor: Colors.grey.shade300,
+                    labels: RangeLabels(
+                      _priceRange.start.round().toString(),
+                      _priceRange.end.round().toString(),
                     ),
+                    onChanged: (values) {
+                      setState(() {
+                        _priceRange = values;
+                      });
+                    },
                   ),
 
                   const SizedBox(height: 8),
+
                   SizedBox(
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: _filterProducts,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueAccent,
                         shape: RoundedRectangleBorder(
@@ -169,45 +232,49 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildProductCard() {
+  Widget _buildProductCard(Product product) {
+    final bool isLocalFile = product.imageUrl.startsWith('/');
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      margin: const EdgeInsets.only(bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: Image.asset(
-              'images/Saint-Laurent.jpg',
-              height: 360,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+            child: isLocalFile
+                ? Image.file(
+                    File(product.imageUrl),
+                    height: 360,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  )
+                : Image.asset(
+                    product.imageUrl,
+                    height: 360,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Saint Laurent Bag",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
+                Text(product.title,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 const SizedBox(height: 4),
-                const Text("Luxury Handbag", style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold)),
+                Text(product.description,
+                    style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
-                      "\$120",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    Row(
+                  children: [
+                    Text('\$${product.price.toStringAsFixed(2)}',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    const Row(
                       children: [
                         Icon(Icons.star, size: 16, color: Colors.amber),
                         SizedBox(width: 4),

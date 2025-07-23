@@ -4,6 +4,9 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your gallery to upload product images</string>
+
 	<key>CFBundleDisplayName</key>
 	<string>Task 6</string>
 	<key>CFBundleExecutable</key>
