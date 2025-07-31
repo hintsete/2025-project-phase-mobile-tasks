@@ -34,7 +34,3 @@ The project is divided into three core layers:
 - Cleanly separated domain logic from data implementation
 
 ---
-
-### 📁 Folder Structure (Simplified)
-
-<pre> lib/ ├── core/ │ └── error/ # Common failure and error handling ├── features/ │ └── product/ │ ├── domain/ │ │ ├── entities/ # Product entity │ │ ├── repositories/ # Abstract ProductRepository │ │ └── usecases/ # CRUD use cases (view, create, update, delete) │ └── data/ │ ├── models/ # ProductModel for JSON handling │ └── repositories/ # ProductRepositoryImpl implementation test/ ├── fixtures/ │ └── product_fixture.json # Sample JSON for model testing └── features/ └── product/ ├── domain/ │ ├── usecases/ # Unit tests for each use case │ └── repositories/ # Mocked or stubbed repo tests └── data/ ├── models/ # Tests for ProductModel (fromJson, toJson) └── repositories/ # Tests for ProductRepositoryImpl </pre>
