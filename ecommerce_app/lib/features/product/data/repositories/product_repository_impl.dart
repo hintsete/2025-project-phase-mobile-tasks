@@ -1,9 +1,17 @@
 import 'package:dartz/dartz.dart';
 import 'package:ecommerce_app/core/error/failure.dart';
+import 'package:ecommerce_app/core/platform/network_info.dart';
+import 'package:ecommerce_app/features/product/data/datasources/product_remote_data_source.dart';
+import 'package:ecommerce_app/features/product/data/datasources/product_local_data_source.dart';
 import 'package:ecommerce_app/features/product/domain/entities/product.dart';
 import 'package:ecommerce_app/features/product/domain/repositories/product_repository.dart';
 
 class ProductRepositoryImpl extends ProductRepository{
+  final ProductRemoteDataSource remoteDatasource;
+  final ProductLocalDataSource localDataSource;
+  final NetworkInfo networkInfo;
+  ProductRepositoryImpl(this.remoteDatasource,this.localDataSource,this.networkInfo);
+
 
   @override
   Future<Either<Failure, void>> createProduct(Product product) async{
