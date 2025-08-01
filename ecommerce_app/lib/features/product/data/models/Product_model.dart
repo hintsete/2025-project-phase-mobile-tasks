@@ -27,6 +27,12 @@ class ProductModel extends Product{
             'price':price
         };
     }
+    factory ProductModel.fromEntity( Product product){
+      return ProductModel(id: product.id, name: product.name, description: product.description, imageURL: product.imageURL, price: product.price);
+    }
+    Product toEntity(){
+      return Product(id: id, name: name, description: description, imageURL: imageURL, price: price);
+    }
     
   
 }
