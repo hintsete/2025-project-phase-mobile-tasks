@@ -266,6 +266,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "internet_connection_checker",
+      "rootUri": "file:///C:/Users/hints/AppData/Local/Pub/Cache/hosted/pub.dev/internet_connection_checker-3.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.15"
+    },
+    {
       "name": "io",
       "rootUri": "file:///C:/Users/hints/AppData/Local/Pub/Cache/hosted/pub.dev/io-1.0.5",
       "packageUri": "lib/",
@@ -602,7 +608,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-07-30T14:36:32.484826Z",
+  "generated": "2025-08-02T16:55:52.046182Z",
   "generator": "pub",
   "generatorVersion": "3.7.0",
   "flutterRoot": "file:///C:/Flutter/src/flutter",
