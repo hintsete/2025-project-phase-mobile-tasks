@@ -6,7 +6,7 @@ import 'package:ecommerce_app/features/product/data/datasources/product_remote_d
 import 'package:ecommerce_app/features/product/data/datasources/product_local_data_source.dart';
 import 'package:ecommerce_app/features/product/data/models/Product_model.dart';
 import 'package:ecommerce_app/features/product/data/repositories/product_repository_impl.dart';
-import 'package:ecommerce_app/features/product/domain/entities/product.dart';
+// import 'package:ecommerce_app/features/product/domain/entities/product.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

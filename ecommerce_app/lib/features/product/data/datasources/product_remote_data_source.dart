@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:ecommerce_app/core/constants/api_constants.dart';
 import 'package:ecommerce_app/core/error/exception.dart';
 import 'package:ecommerce_app/features/product/data/models/Product_model.dart';
-import 'package:ecommerce_app/features/product/domain/entities/product.dart';
+// import 'package:ecommerce_app/features/product/domain/entities/product.dart';
 import 'package:http/http.dart' as http;
 
 
