@@ -23,12 +23,12 @@ abstract class ProductRemoteDataSource {
 
   Future< void> deleteProduct(int id);
   
-  Future< List<Product>> getAllProducts() ;
+  Future< List<ProductModel>> getAllProducts() ;
    
     // return const Right([]);
   
   
-  Future< Product> getProductById(int id) ;
+  Future< ProductModel> getProductById(int id) ;
   
     // return Right(Product(id: id, name: 'name', description: 'description', imageURL: 'imageURL', price: 10));
   
@@ -64,7 +64,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource{
   }
 
   @override
-  Future<List<Product>> getAllProducts()async {
+  Future<List<ProductModel>> getAllProducts()async {
  
     final response=await client.get(
       Uri.parse(baseUrl),
@@ -79,7 +79,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource{
   }
 
   @override
-  Future<Product> getProductById(int id)async {
+  Future<ProductModel> getProductById(int id)async {
  
     final result=await client.get(
       Uri.parse('$baseUrl/$id'),
