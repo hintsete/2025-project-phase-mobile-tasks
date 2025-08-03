@@ -1,7 +1,11 @@
+import 'package:ecommerce_app/injection_container.dart' as di;
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async{
+  // runApp(const MyApp());
+   WidgetsFlutterBinding.ensureInitialized();
+  await di.init();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
