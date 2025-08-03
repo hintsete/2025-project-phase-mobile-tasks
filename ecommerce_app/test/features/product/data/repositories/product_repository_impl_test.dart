@@ -103,7 +103,7 @@ void main(){
 
     final result = await repository.getAllProducts();
 
-    expect(result, Left(ServerFailure()));
+    expect(result, Left(ServerFailure("Server Exception")));
   });
 
   test('should return CacheFailure when local fails', () async {
@@ -112,7 +112,7 @@ void main(){
 
     final result = await repository.getAllProducts();
 
-    expect(result, Left(CacheFailure()));
+    expect(result, Left(CacheFailure("Cache Exception")));
   });
 });
 
@@ -147,7 +147,7 @@ void main(){
       //act
       final result=await repository.getProductById(1);
       //assert
-      expect(result, Left(ServerFailure()));
+      expect(result, Left(ServerFailure("Server exception")));
 
     });
     test('should return CacheFailure  when local fails', ()async{
@@ -157,7 +157,7 @@ void main(){
       //act
       final result=await repository.getProductById(1);
       //assert
-      expect(result, Left(CacheFailure()));
+      expect(result, Left(CacheFailure("Cache Exception")));
 
     });
 
@@ -182,7 +182,7 @@ void main(){
       //act
       final result=await repository.createProduct(tProduct);
       //assert
-      expect(result, Left(NetworkFailure()));
+      expect(result, Left(NetworkFailure("Network Failure")));
       
     });
     test('should call remote when online', ()async{
@@ -201,7 +201,7 @@ void main(){
 
       final result = await repository.createProduct(tProduct);
 
-      expect(result, Left(ServerFailure()));
+      expect(result, const Left(ServerFailure("Server Exception")));
     });
   });
   group('updateProduct', () {
@@ -216,12 +216,18 @@ void main(){
   });
 
   test('should return NetworkFailure when offline', () async {
-    when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+  when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
 
-    final result = await repository.updateProduct(tProduct);
+  final result = await repository.updateProduct(tProduct);
 
-    expect(result, Left(NetworkFailure()));
-  });
+  expect(
+    result,
+    Left(predicate((failure) =>
+      failure is NetworkFailure &&
+      failure.message.toLowerCase().contains('internet connection')
+    )),
+  );
+});
 
   test('should return ServerFailure when remote fails', () async {
     when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
@@ -229,7 +235,7 @@ void main(){
 
     final result = await repository.updateProduct(tProduct);
 
-    expect(result, Left(ServerFailure()));
+    expect(result, Left(ServerFailure("Server Exception")));
   });
 });
 group('deleteProduct', () {
@@ -257,7 +263,7 @@ group('deleteProduct', () {
 
     final result = await repository.deleteProduct(1);
 
-    expect(result, Left(ServerFailure()));
+    expect(result, Left(ServerFailure("Server Exception")));
   });
 });
 
