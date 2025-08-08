@@ -9,7 +9,7 @@ class AuthenticatedUserModel extends AuthenticatedUser{
     required super.accessToken});
 
     factory AuthenticatedUserModel.fromJson(Map<String,dynamic> json){
-      return AuthenticatedUserModel(id: json['id'], name: json['name'], email: json['email'], accessToken: json['access-token']);
+      return AuthenticatedUserModel(id: json['id'].toString(), name: json['name'], email: json['email'], accessToken: json['access-token'] ?? '');
     }
 
     Map<String,dynamic> toJson(){

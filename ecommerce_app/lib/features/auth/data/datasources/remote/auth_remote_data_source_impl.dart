@@ -36,6 +36,8 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
 
   @override
   Future<UserModel> signup(SignupModel signupModel) async {
+    print('Sending signup request to: $_baseUrl/register');
+    print('Request body: ${jsonEncode(signupModel.toJson())}');
     final response = await client.post(
       Uri.parse('$_baseUrl/register'),
       headers: {
@@ -43,8 +45,12 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       },
       body: jsonEncode(signupModel.toJson()),
     );
+    print('Received response: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    
 
-    if (response.statusCode == 200) {
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return UserModel.fromJson(jsonDecode(response.body)['data']);
     } else if (response.statusCode == 409) {
       throw AuthenticationException.emailAlreadyInUse();

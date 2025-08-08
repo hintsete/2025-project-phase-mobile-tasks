@@ -5,8 +5,25 @@ import 'package:go_router/go_router.dart';
 import 'package:ecommerce_app/core/presentation/routes/routes.dart';
 import 'package:ecommerce_app/features/auth/presentation/bloc/auth_bloc.dart';
 
-class SplashScreen extends StatelessWidget {
+
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Trigger auth check
+    // context.read<AuthBloc>().add(AuthLoadRequested());
+    Future.delayed(const Duration(seconds: 8), () {
+    if (!mounted) return; // <-- ✅ Prevent using context if widget is disposed
+    context.read<AuthBloc>().add(AuthLoadRequested());
+  });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +36,20 @@ class SplashScreen extends StatelessWidget {
             context.go(Routes.login);
           }
         },
-        child: Stack(
+        child:Stack(
           fit: StackFit.expand,
           children: [
             // Background image
             Image.asset(
-              'assets/images/splash_background.png', // Replace with your image path
+              'assets/images/splash_background.png',
               fit: BoxFit.cover,
             ),
 
-            // Blue overlay
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.blue.withValues(),
+            // Blue overlay with Opacity
+            Opacity(
+              opacity: 0.6,
+              child: Container(
+                color: Colors.blue,
               ),
             ),
 
@@ -40,10 +58,8 @@ class SplashScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // "ECOM" inside a white box
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -59,8 +75,6 @@ class SplashScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  // Subtitle
                   const Text(
                     'ECOMMERCE APP',
                     style: TextStyle(
@@ -74,6 +88,7 @@ class SplashScreen extends StatelessWidget {
             ),
           ],
         ),
+
       ),
     );
   }

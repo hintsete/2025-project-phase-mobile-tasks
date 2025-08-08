@@ -76,19 +76,50 @@ class AuthRepositoryImpl implements AuthRepository{
   }
 
   @override
-  Future<Either<Failure, AuthenticatedUser>> signup({required String name, required String email, required String password})async {
+  Future<Either<Failure, AuthenticatedUser>> signup({
+    required String name, 
+    required String email, 
+    required String password})async {
     if(await networkInfo.isConnected){
       try{
         await remote.signup(SignupModel(name: name, email: email, password: password));
-        final user=await login(email: email,password: password);
-        client.authToken=user.fold((l)=>'', (r)=> r.accessToken);
-        return user;
+        // final user=await login(email: email,password: password);
+        final loginResult = await remote.login(LoginModel(
+          email: email,
+          password: password,
+        ));
+        // 3. Get full user details
+      final userModel = await remote.getCurrentUser();
 
-      }on ServerException{
-        return const Left(ServerFailure('Unable to signup'));
-      }
-    }else{
-      return const Left(NetworkFailure());
+      // 4. Create authenticated user
+      final authenticatedUser = AuthenticatedUserModel(
+        id: userModel.id,
+        name: userModel.name,
+        email: userModel.email,
+        accessToken: loginResult.token,
+      );
+
+      // 5. Cache the user
+      await local.cacheUser(authenticatedUser);
+      client.authToken = loginResult.token;
+
+      return Right(authenticatedUser);
+    } on ServerException {
+      return const Left(ServerFailure('Unable to signup'));
+    } on AuthenticationException catch (e) {
+      return Left(AuthFailure(e.message));
     }
+  } else {
+    return const Left(NetworkFailure());
+  }
+    //     client.authToken=user.fold((l)=>'', (r)=> r.accessToken);
+    //     return user;
+
+    //   }on ServerException{
+    //     return const Left(ServerFailure('Unable to signup'));
+    //   }
+    // }else{
+    //   return const Left(NetworkFailure());
+    // }
     
   }}

@@ -24,7 +24,7 @@ void main(){
   const tPassword='password';
   const tAccessToken='token';
 
-  const tUser=AuthenticatedUser(id: 1, name: tName, email: tEmail, accessToken: tAccessToken);
+  const tUser=AuthenticatedUser(id: '1', name: tName, email: tEmail, accessToken: tAccessToken);
 
   test('should return AuthenticatedUser when login is successful', ()async{
     //arrange
