@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:ecommerce_app/core/constants/api_constants.dart';
 import 'package:equatable/equatable.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:socket_io_client/socket_io_client.dart' as io;
+
 
 enum HttpMethod { post, put }
 
@@ -37,10 +40,9 @@ class HttpResponse extends Equatable {
 
 class HttpClient {
   final http.Client client;
-  final http.MultipartRequest Function(HttpMethod, String)
-      multipartRequestFactory;
-
-  final _defaultHeaders = {
+  final http.MultipartRequest Function(HttpMethod, String) multipartRequestFactory;
+  io.Socket? _socket;
+  final Map<String, String> _defaultHeaders = {
     'Content-Type': 'application/json; charset=UTF-8',
   };
 
@@ -50,8 +52,21 @@ class HttpClient {
   });
 
   set authToken(String token) {
-    _defaultHeaders['Authorization'] = 'Bearer $token';
+    if (token.isEmpty) {
+      _defaultHeaders.remove('Authorization');
+      _socket?.disconnect();
+      _socket = null;
+    } else {
+      _defaultHeaders['Authorization'] = 'Bearer $token';
+      _socket = io.io(socketUrl, <String, dynamic>{
+        'autoConnect': false,
+        'transports': ['websocket'],
+        'extraHeaders': {'authorization': 'Bearer $token'},
+      });
+    }
   }
+
+  io.Socket get socket => _socket!;
 
   Future<HttpResponse> get(String url) async {
     final response = await client.get(Uri.parse(url), headers: _defaultHeaders);

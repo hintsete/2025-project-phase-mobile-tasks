@@ -1,2 +1,3 @@
 // const String baseUrl='https://g5-flutter-learning-path-be.onrender.com/';
-const String baseUrl = 'https://g5-flutter-learning-path-be.onrender.com/api/v2';
+const  baseUrl = 'https://g5-flutter-learning-path-be-tvum.onrender.com/api/v2';
+const String socketUrl = 'https://g5-flutter-learning-path-be.onrender.com';

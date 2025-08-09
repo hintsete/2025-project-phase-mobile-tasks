@@ -6,7 +6,7 @@ class SignupModel extends Equatable {
   final String password;
 
 
-  SignupModel({
+  const SignupModel({
     required this.name,
     required this.email,
     required this.password,
@@ -20,6 +20,6 @@ class SignupModel extends Equatable {
   }
   
   @override
-  // TODO: implement props
+  
   List<Object?> get props => [name,email,password];
 }

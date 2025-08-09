@@ -31,36 +31,78 @@ class AuthRepositoryImpl implements AuthRepository{
     try{
       final user= await local.getUser();
       client.authToken=user.accessToken;
-      return right(user);
+      return Right(user);
     }on CacheException{
       return Left(AuthFailure.tokenExpired());
     }
   }
 
-  @override
-  Future<Either<Failure, AuthenticatedUser>> login({required String email, required String password})async {
-    if(await networkInfo.isConnected){
-      try{
-        final accessToken=await remote.login(LoginModel(email:email,password:password));
-        client.authToken=accessToken.token;
-        final user=await remote.getCurrentUser();
-        final authenticatedUser=AuthenticatedUserModel(
-          id: user.id, 
-          name: user.name, 
-          email: user.email, 
-          accessToken: accessToken.token
-        );
-        await local.cacheUser(authenticatedUser);
-        return Right(authenticatedUser);
+  // @override
+  // Future<Either<Failure, AuthenticatedUser>> login({required String email, required String password})async {
+  //   if(await networkInfo.isConnected){
+  //     try{
+  //       final accessToken=await remote.login(LoginModel(email:email,password:password));
+  //       client.authToken=accessToken.token;
+  //       final user=await remote.getCurrentUser();
+  //       final authenticatedUser=AuthenticatedUserModel(
+  //         id: user.id, 
+  //         name: user.name, 
+  //         email: user.email, 
+  //         accessToken: accessToken.token
+  //       );
+  //       await local.cacheUser(authenticatedUser);
+  //       return Right(authenticatedUser);
 
 
-      }on ServerException{
-        return const Left(ServerFailure('Unable to login'));
-      }
-    }else{
-    return const Left(NetworkFailure());
-  }
+  //     }on ServerException{
+  //       return const Left(ServerFailure('Unable to login'));
+  //     }
+  //   }else{
+  //   return const Left(NetworkFailure());
+  // }
     
+  // }
+  @override
+  Future<Either<Failure, AuthenticatedUser>> login({
+    required String email, 
+    required String password
+  }) async {
+    if (!await networkInfo.isConnected) {
+      return const Left(NetworkFailure());
+    }
+
+    try {
+      // 1. Get access token
+      final accessToken = await remote.login(LoginModel(
+        email: email,
+        password: password,
+      ));
+
+      // 2. Set token in client
+      client.authToken = accessToken.token;
+
+      // 3. Get user details
+      final user = await remote.getCurrentUser();
+
+      // 4. Create and cache authenticated user
+      final authenticatedUser = AuthenticatedUserModel(
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        accessToken: accessToken.token,
+      );
+      
+      await local.cacheUser(authenticatedUser);
+      return Right(authenticatedUser);
+
+    } on AuthenticationException catch (e) {
+      client.authToken = ''; // Clear invalid token
+      return Left(AuthFailure(e.message));
+    } on ServerException {
+      return const Left(ServerFailure('Unable to login'));
+    } on FormatException {
+      return const Left(ServerFailure('Invalid server response'));
+    }
   }
 
   @override
@@ -68,58 +110,44 @@ class AuthRepositoryImpl implements AuthRepository{
     try{
       await local.clear();
       client.authToken='';
-      return const Right(unit);
+      return const Right(null);
     }on CacheException{
       return const Left(CacheFailure('Unable to logout'));
     }
     
   }
-
   @override
-  Future<Either<Failure, AuthenticatedUser>> signup({
-    required String name, 
-    required String email, 
-    required String password})async {
-    if(await networkInfo.isConnected){
-      try{
-        await remote.signup(SignupModel(name: name, email: email, password: password));
-        // final user=await login(email: email,password: password);
-        final loginResult = await remote.login(LoginModel(
-          email: email,
-          password: password,
-        ));
-        // 3. Get full user details
-      final userModel = await remote.getCurrentUser();
+Future<Either<Failure, AuthenticatedUser>> signup({
+  required String name, 
+  required String email, 
+  required String password}) async {
+  if (await networkInfo.isConnected) {
+    try {
+      // 1. Register the user
+      final userModel = await remote.signup(
+        SignupModel(name: name, email: email, password: password),
+      );
 
-      // 4. Create authenticated user
+      // 2. Return authenticated user without token (will need to login separately)
       final authenticatedUser = AuthenticatedUserModel(
         id: userModel.id,
         name: userModel.name,
         email: userModel.email,
-        accessToken: loginResult.token,
+        accessToken: '', // No token available yet
       );
-
-      // 5. Cache the user
-      await local.cacheUser(authenticatedUser);
-      client.authToken = loginResult.token;
 
       return Right(authenticatedUser);
     } on ServerException {
-      return const Left(ServerFailure('Unable to signup'));
+      return const Left(ServerFailure('Unable to register'));
     } on AuthenticationException catch (e) {
       return Left(AuthFailure(e.message));
     }
   } else {
     return const Left(NetworkFailure());
   }
-    //     client.authToken=user.fold((l)=>'', (r)=> r.accessToken);
-    //     return user;
+}
 
-    //   }on ServerException{
-    //     return const Left(ServerFailure('Unable to signup'));
-    //   }
-    // }else{
-    //   return const Left(NetworkFailure());
-    // }
-    
-  }}
+  
+
+
+}

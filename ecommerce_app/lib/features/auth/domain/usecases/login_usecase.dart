@@ -22,7 +22,7 @@ class LoginParams extends Equatable{
   final String email;
   final String password;
 
-  LoginParams(this.email,this.password);
+  const LoginParams(this.email,this.password);
   
   @override
 

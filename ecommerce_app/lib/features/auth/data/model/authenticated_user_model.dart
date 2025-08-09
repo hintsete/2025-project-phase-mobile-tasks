@@ -1,31 +1,30 @@
-import 'package:ecommerce_app/features/auth/domain/entities/authenticated_user.dart';
+import '../../domain/entities/authenticated_user.dart';
 
+class AuthenticatedUserModel extends AuthenticatedUser {
+  const AuthenticatedUserModel({
+    required super.id,
+    required super.email,
+    required super.name,
+    required super.accessToken,
+  });
 
-class AuthenticatedUserModel extends AuthenticatedUser{
-  AuthenticatedUserModel({
-    required super.id, 
-    required super.name, 
-    required super.email, 
-    required super.accessToken});
+  factory AuthenticatedUserModel.fromJson(Map<String, dynamic> json) {
+    return AuthenticatedUserModel(
+      id: json['id'],
+      email: json['email'],
+      name: json['name'],
+      accessToken: json['access_token'],
+    );
+  }
 
-    factory AuthenticatedUserModel.fromJson(Map<String,dynamic> json){
-      return AuthenticatedUserModel(id: json['id'].toString(), name: json['name'], email: json['email'], accessToken: json['access-token'] ?? '');
-    }
-
-    Map<String,dynamic> toJson(){
-      return{
-        'id':id,
-        'name':name,
-        'email':email,
-        'access_token':accessToken,
-
-        
-
-      };
-    }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'name': name,
+      'access_token': accessToken,
+    };
+  }
 }
-
-
-
 
 

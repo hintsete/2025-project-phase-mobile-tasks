@@ -4,7 +4,7 @@ class LoginModel extends Equatable {
   final String email;
   final String password;
 
-  LoginModel({
+  const LoginModel({
     required this.email,
     required this.password,
   });
@@ -29,9 +29,23 @@ class AccessToken extends Equatable{
 
   const AccessToken({required this.token});
   factory AccessToken.fromJson(Map<String,dynamic> json){
-    // return AccessToken(token: json['access_token']);
+  // Handle case where token is at root level
+  if (json['token'] != null) {
+    return AccessToken(token: json['token']);
+  }
+  // Handle case where token is in data object
+  if (json['data']?['token'] != null) {
+    return AccessToken(token: json['data']['token']);
+  }
+  // Handle case where it's access_token instead of token
+  if (json['access_token'] != null) {
+    return AccessToken(token: json['access_token']);
+  }
+  if (json['data']?['access_token'] != null) {
     return AccessToken(token: json['data']['access_token']);
   }
+  throw FormatException('Invalid token response format: $json');
+}
   
   @override
  

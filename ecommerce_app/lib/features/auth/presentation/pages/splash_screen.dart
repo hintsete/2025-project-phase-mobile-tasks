@@ -19,10 +19,11 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     // Trigger auth check
     // context.read<AuthBloc>().add(AuthLoadRequested());
-    Future.delayed(const Duration(seconds: 8), () {
-    if (!mounted) return; // <-- ✅ Prevent using context if widget is disposed
+    Future.delayed(const Duration(seconds: 12), () {
+    if (!mounted) return;
     context.read<AuthBloc>().add(AuthLoadRequested());
   });
+
   }
 
   @override

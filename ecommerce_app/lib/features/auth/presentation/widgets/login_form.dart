@@ -8,9 +8,7 @@ import '../../../../core/presentation/widgets/input.dart';
 import '../bloc/auth_bloc.dart';
 
 class LoginForm extends StatelessWidget {
-  LoginForm({
-    super.key,
-  });
+  LoginForm({super.key});
 
   final _formKey = GlobalKey<FormState>();
 
@@ -19,16 +17,18 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final labelStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: Colors.grey[700],
+        );
+
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Email',
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-          const SizedBox(height: 8),
+          Text('Email', style: labelStyle),
+          const SizedBox(height: 6),
           Input(
             controller: _emailController,
             hint: 'ex: jon.smith@email.com',
@@ -37,14 +37,12 @@ class LoginForm extends StatelessWidget {
                 return 'Please enter your email';
               }
               return null;
-            }, label: '',
+            },
+            label: '',
           ),
-          const SizedBox(height: 24),
-          Text(
-            'Password',
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 28),
+          Text('Password', style: labelStyle),
+          const SizedBox(height: 6),
           Input(
             controller: _passwordController,
             isPassword: true,
@@ -54,9 +52,10 @@ class LoginForm extends StatelessWidget {
                 return 'Please enter your password';
               }
               return null;
-            }, label: '',
+            },
+            label: '',
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 36),
           SizedBox(
             width: double.infinity,
             child: BlocBuilder<AuthBloc, AuthState>(
@@ -72,11 +71,14 @@ class LoginForm extends StatelessWidget {
                       _login(context);
                     }
                   },
+                  filled: true,      
+                  color: Colors.blue,
+                  borderRadius: 4,
                 );
               },
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 56),
           Center(
             child: TextButton(
               onPressed: () {
@@ -91,9 +93,11 @@ class LoginForm extends StatelessWidget {
                       text: 'SIGN UP',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: Colors.blue,
                           ),
-                    )
-                  ]),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

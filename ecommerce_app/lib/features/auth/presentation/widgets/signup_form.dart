@@ -112,13 +112,49 @@ class _SignupFormState extends State<SignupForm> {
             children: [
               Checkbox(
                 value: _termsAccepted,
+                
                 onChanged: (value) {
                   setState(() {
                     _termsAccepted = value ?? false;
                   });
                 },
+                side: BorderSide(
+                  color: Colors.blueAccent, // Border color when unchecked
+                  width: 2.0,
+                ),
               ),
-              const Text('I understood the terms & policy.'),
+              RichText(
+                text: TextSpan(
+                  text: 'I understood the ',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  children: [
+                    TextSpan(
+                      text: 'terms',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.blueAccent,
+                          ),
+                    ),
+                    TextSpan(
+                      text: ' & ',
+                      // style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.blueAccent,
+                          ),
+                      
+                    ),
+                    TextSpan(
+                      text: 'policy',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.blueAccent,
+                          ),
+                    ),
+                    TextSpan(
+                      text: '.',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 40),
@@ -143,6 +179,9 @@ class _SignupFormState extends State<SignupForm> {
                       );
                     }
                   },
+                  filled: true,      
+                  color: Colors.blue,
+                  borderRadius: 4,
                 );
               },
             ),
@@ -161,7 +200,7 @@ class _SignupFormState extends State<SignupForm> {
                     TextSpan(
                       text: 'SIGN IN',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.bold, color: Colors.blue,
                           ),
                     )
                   ],

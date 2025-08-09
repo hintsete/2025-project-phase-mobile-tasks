@@ -1,5 +1,8 @@
 import 'package:ecommerce_app/features/auth/presentation/pages/login_page.dart';
 import 'package:ecommerce_app/features/auth/presentation/pages/sign_up_page.dart';
+import 'package:ecommerce_app/features/product/domain/entities/product.dart';
+import 'package:ecommerce_app/features/product/presentation/pages/add_update_page.dart';
+import 'package:ecommerce_app/features/product/presentation/pages/home_page.dart';
 import 'package:go_router/go_router.dart';
 // import '../../../features/auth/presentation/pages/login.dart';
 // import '../../../features/auth/presentation/pages/register.dart';
@@ -28,6 +31,23 @@ final router = GoRouter(
       path: Routes.register,
       builder: (context, state) => const SignUpPage(),
     ),
+    GoRoute(
+      path:Routes.home,
+      builder: (context,state)=> const HomePage(),
+    ),
+    GoRoute(
+      path: Routes.addProduct,
+      builder: (context, state) => const AddUpdatePage(),
+    ),
+    GoRoute(
+      path: Routes.updateProduct,
+      builder: (context, state) {
+        final product = state.extra as Product;
+        return AddUpdatePage(product: product);
+      },
+    ),
+
+   
 
     //
     // GoRoute(
