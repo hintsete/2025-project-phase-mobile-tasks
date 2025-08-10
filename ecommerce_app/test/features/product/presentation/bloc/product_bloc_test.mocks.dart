@@ -3,26 +3,29 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
+import 'dart:async' as _i8;
 
 import 'package:dartz/dartz.dart' as _i3;
-import 'package:ecommerce_app/core/error/failure.dart' as _i6;
-import 'package:ecommerce_app/core/usecase.dart' as _i11;
+import 'package:ecommerce_app/core/error/failure.dart' as _i9;
+import 'package:ecommerce_app/core/network/http.dart' as _i6;
+import 'package:ecommerce_app/core/usecase.dart' as _i14;
 import 'package:ecommerce_app/features/product/domain/entities/product.dart'
-    as _i7;
+    as _i10;
 import 'package:ecommerce_app/features/product/domain/repositories/product_repository.dart'
     as _i2;
 import 'package:ecommerce_app/features/product/domain/usecases/create_product_usecase.dart'
-    as _i4;
+    as _i7;
 import 'package:ecommerce_app/features/product/domain/usecases/delete_product_usecase.dart'
-    as _i8;
+    as _i11;
 import 'package:ecommerce_app/features/product/domain/usecases/update_product_usecase.dart'
-    as _i9;
-import 'package:ecommerce_app/features/product/domain/usecases/view_all_products_usecase.dart'
-    as _i10;
-import 'package:ecommerce_app/features/product/domain/usecases/view_specific_product_usecase.dart'
     as _i12;
+import 'package:ecommerce_app/features/product/domain/usecases/view_all_products_usecase.dart'
+    as _i13;
+import 'package:ecommerce_app/features/product/domain/usecases/view_specific_product_usecase.dart'
+    as _i15;
+import 'package:http/http.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:socket_io_client/socket_io_client.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -49,11 +52,32 @@ class _FakeEither_1<L, R> extends _i1.SmartFake implements _i3.Either<L, R> {
     : super(parent, parentInvocation);
 }
 
+class _FakeClient_2 extends _i1.SmartFake implements _i4.Client {
+  _FakeClient_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeMultipartRequest_3 extends _i1.SmartFake
+    implements _i4.MultipartRequest {
+  _FakeMultipartRequest_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeSocket_4 extends _i1.SmartFake implements _i5.Socket {
+  _FakeSocket_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeHttpResponse_5 extends _i1.SmartFake implements _i6.HttpResponse {
+  _FakeHttpResponse_5(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [CreateProductUseCase].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockCreateProductUseCase extends _i1.Mock
-    implements _i4.CreateProductUseCase {
+    implements _i7.CreateProductUseCase {
   MockCreateProductUseCase() {
     _i1.throwOnMissingStub(this);
   }
@@ -70,24 +94,24 @@ class MockCreateProductUseCase extends _i1.Mock
           as _i2.ProductRepository);
 
   @override
-  _i5.Future<_i3.Either<_i6.Failure, void>> call(_i7.Product? product) =>
+  _i8.Future<_i3.Either<_i9.Failure, void>> call(_i10.Product? product) =>
       (super.noSuchMethod(
             Invocation.method(#call, [product]),
-            returnValue: _i5.Future<_i3.Either<_i6.Failure, void>>.value(
-              _FakeEither_1<_i6.Failure, void>(
+            returnValue: _i8.Future<_i3.Either<_i9.Failure, void>>.value(
+              _FakeEither_1<_i9.Failure, void>(
                 this,
                 Invocation.method(#call, [product]),
               ),
             ),
           )
-          as _i5.Future<_i3.Either<_i6.Failure, void>>);
+          as _i8.Future<_i3.Either<_i9.Failure, void>>);
 }
 
 /// A class which mocks [DeleteProductUseCase].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockDeleteProductUseCase extends _i1.Mock
-    implements _i8.DeleteProductUseCase {
+    implements _i11.DeleteProductUseCase {
   MockDeleteProductUseCase() {
     _i1.throwOnMissingStub(this);
   }
@@ -104,24 +128,24 @@ class MockDeleteProductUseCase extends _i1.Mock
           as _i2.ProductRepository);
 
   @override
-  _i5.Future<_i3.Either<_i6.Failure, void>> call(int? id) =>
+  _i8.Future<_i3.Either<_i9.Failure, void>> call(String? id) =>
       (super.noSuchMethod(
             Invocation.method(#call, [id]),
-            returnValue: _i5.Future<_i3.Either<_i6.Failure, void>>.value(
-              _FakeEither_1<_i6.Failure, void>(
+            returnValue: _i8.Future<_i3.Either<_i9.Failure, void>>.value(
+              _FakeEither_1<_i9.Failure, void>(
                 this,
                 Invocation.method(#call, [id]),
               ),
             ),
           )
-          as _i5.Future<_i3.Either<_i6.Failure, void>>);
+          as _i8.Future<_i3.Either<_i9.Failure, void>>);
 }
 
 /// A class which mocks [UpdateProductUseCase].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockUpdateProductUseCase extends _i1.Mock
-    implements _i9.UpdateProductUseCase {
+    implements _i12.UpdateProductUseCase {
   MockUpdateProductUseCase() {
     _i1.throwOnMissingStub(this);
   }
@@ -138,24 +162,24 @@ class MockUpdateProductUseCase extends _i1.Mock
           as _i2.ProductRepository);
 
   @override
-  _i5.Future<_i3.Either<_i6.Failure, void>> call(_i7.Product? product) =>
+  _i8.Future<_i3.Either<_i9.Failure, void>> call(_i10.Product? product) =>
       (super.noSuchMethod(
             Invocation.method(#call, [product]),
-            returnValue: _i5.Future<_i3.Either<_i6.Failure, void>>.value(
-              _FakeEither_1<_i6.Failure, void>(
+            returnValue: _i8.Future<_i3.Either<_i9.Failure, void>>.value(
+              _FakeEither_1<_i9.Failure, void>(
                 this,
                 Invocation.method(#call, [product]),
               ),
             ),
           )
-          as _i5.Future<_i3.Either<_i6.Failure, void>>);
+          as _i8.Future<_i3.Either<_i9.Failure, void>>);
 }
 
 /// A class which mocks [ViewAllProductsUseCase].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockViewAllProductsUseCase extends _i1.Mock
-    implements _i10.ViewAllProductsUseCase {
+    implements _i13.ViewAllProductsUseCase {
   MockViewAllProductsUseCase() {
     _i1.throwOnMissingStub(this);
   }
@@ -172,27 +196,27 @@ class MockViewAllProductsUseCase extends _i1.Mock
           as _i2.ProductRepository);
 
   @override
-  _i5.Future<_i3.Either<_i6.Failure, List<_i7.Product>>> call(
-    _i11.NoParams? params,
+  _i8.Future<_i3.Either<_i9.Failure, List<_i10.Product>>> call(
+    _i14.NoParams? params,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#call, [params]),
             returnValue:
-                _i5.Future<_i3.Either<_i6.Failure, List<_i7.Product>>>.value(
-                  _FakeEither_1<_i6.Failure, List<_i7.Product>>(
+                _i8.Future<_i3.Either<_i9.Failure, List<_i10.Product>>>.value(
+                  _FakeEither_1<_i9.Failure, List<_i10.Product>>(
                     this,
                     Invocation.method(#call, [params]),
                   ),
                 ),
           )
-          as _i5.Future<_i3.Either<_i6.Failure, List<_i7.Product>>>);
+          as _i8.Future<_i3.Either<_i9.Failure, List<_i10.Product>>>);
 }
 
 /// A class which mocks [ViewSpecificProductUseCase].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockViewSpecificProductUseCase extends _i1.Mock
-    implements _i12.ViewSpecificProductUseCase {
+    implements _i15.ViewSpecificProductUseCase {
   MockViewSpecificProductUseCase() {
     _i1.throwOnMissingStub(this);
   }
@@ -209,15 +233,118 @@ class MockViewSpecificProductUseCase extends _i1.Mock
           as _i2.ProductRepository);
 
   @override
-  _i5.Future<_i3.Either<_i6.Failure, _i7.Product>> call(int? id) =>
+  _i8.Future<_i3.Either<_i9.Failure, _i10.Product>> call(String? id) =>
       (super.noSuchMethod(
             Invocation.method(#call, [id]),
-            returnValue: _i5.Future<_i3.Either<_i6.Failure, _i7.Product>>.value(
-              _FakeEither_1<_i6.Failure, _i7.Product>(
+            returnValue:
+                _i8.Future<_i3.Either<_i9.Failure, _i10.Product>>.value(
+                  _FakeEither_1<_i9.Failure, _i10.Product>(
+                    this,
+                    Invocation.method(#call, [id]),
+                  ),
+                ),
+          )
+          as _i8.Future<_i3.Either<_i9.Failure, _i10.Product>>);
+}
+
+/// A class which mocks [HttpClient].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockHttpClient extends _i1.Mock implements _i6.HttpClient {
+  MockHttpClient() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i4.Client get client =>
+      (super.noSuchMethod(
+            Invocation.getter(#client),
+            returnValue: _FakeClient_2(this, Invocation.getter(#client)),
+          )
+          as _i4.Client);
+
+  @override
+  _i4.MultipartRequest Function(_i6.HttpMethod, String)
+  get multipartRequestFactory =>
+      (super.noSuchMethod(
+            Invocation.getter(#multipartRequestFactory),
+            returnValue:
+                (_i6.HttpMethod __p0, String __p1) => _FakeMultipartRequest_3(
+                  this,
+                  Invocation.getter(#multipartRequestFactory),
+                ),
+          )
+          as _i4.MultipartRequest Function(_i6.HttpMethod, String));
+
+  @override
+  _i5.Socket get socket =>
+      (super.noSuchMethod(
+            Invocation.getter(#socket),
+            returnValue: _FakeSocket_4(this, Invocation.getter(#socket)),
+          )
+          as _i5.Socket);
+
+  @override
+  set authToken(String? token) => super.noSuchMethod(
+    Invocation.setter(#authToken, token),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  _i8.Future<_i6.HttpResponse> get(String? url) =>
+      (super.noSuchMethod(
+            Invocation.method(#get, [url]),
+            returnValue: _i8.Future<_i6.HttpResponse>.value(
+              _FakeHttpResponse_5(this, Invocation.method(#get, [url])),
+            ),
+          )
+          as _i8.Future<_i6.HttpResponse>);
+
+  @override
+  _i8.Future<_i6.HttpResponse> post(String? url, Map<String, dynamic>? body) =>
+      (super.noSuchMethod(
+            Invocation.method(#post, [url, body]),
+            returnValue: _i8.Future<_i6.HttpResponse>.value(
+              _FakeHttpResponse_5(this, Invocation.method(#post, [url, body])),
+            ),
+          )
+          as _i8.Future<_i6.HttpResponse>);
+
+  @override
+  _i8.Future<_i6.HttpResponse> put(String? url, Map<String, dynamic>? body) =>
+      (super.noSuchMethod(
+            Invocation.method(#put, [url, body]),
+            returnValue: _i8.Future<_i6.HttpResponse>.value(
+              _FakeHttpResponse_5(this, Invocation.method(#put, [url, body])),
+            ),
+          )
+          as _i8.Future<_i6.HttpResponse>);
+
+  @override
+  _i8.Future<_i6.HttpResponse> delete(String? url) =>
+      (super.noSuchMethod(
+            Invocation.method(#delete, [url]),
+            returnValue: _i8.Future<_i6.HttpResponse>.value(
+              _FakeHttpResponse_5(this, Invocation.method(#delete, [url])),
+            ),
+          )
+          as _i8.Future<_i6.HttpResponse>);
+
+  @override
+  _i8.Future<_i6.HttpResponse> uploadFile(
+    String? url,
+    _i6.HttpMethod? method,
+    Map<String, String>? body,
+    List<_i6.UploadFile>? files,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#uploadFile, [url, method, body, files]),
+            returnValue: _i8.Future<_i6.HttpResponse>.value(
+              _FakeHttpResponse_5(
                 this,
-                Invocation.method(#call, [id]),
+                Invocation.method(#uploadFile, [url, method, body, files]),
               ),
             ),
           )
-          as _i5.Future<_i3.Either<_i6.Failure, _i7.Product>>);
+          as _i8.Future<_i6.HttpResponse>);
 }

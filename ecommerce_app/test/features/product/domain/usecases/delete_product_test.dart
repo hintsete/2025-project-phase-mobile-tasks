@@ -22,7 +22,7 @@ void main() {
   });
   test('should delete product with correct id', () async {
     //arrange
-    const testId=1;
+    const testId='1';
     
     when(repository.deleteProduct(testId)).thenAnswer((_)async=>const Right(null));
     //act

@@ -52,7 +52,7 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteProduct(int id) async {
+  Future<Either<Failure, void>> deleteProduct(String id) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDatasource.deleteProduct(id);
@@ -91,26 +91,27 @@ class ProductRepositoryImpl extends ProductRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, Product>> getProductById(int id) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remoteProduct = await remoteDatasource.getProductById(id);
-        return Right(remoteProduct.toEntity());
-      } on ServerException {
-        return const Left(ServerFailure("Server Exception"));
-      } catch (_) {
-        return const Left(ServerFailure("Unknown server error"));
-      }
-    } else {
-      try {
-        final cachedProduct = await localDataSource.getProductById(id);
-        return Right(cachedProduct.toEntity());
-      } on CacheException {
-        return const Left(CacheFailure("Cache Exception"));
-      } catch (_) {
-        return const Left(CacheFailure("Unknown cache error"));
-      }
+@override
+Future<Either<Failure, Product>> getProductById(String id) async { // String id now
+  if (await networkInfo.isConnected) {
+    try {
+      final remoteProduct = await remoteDatasource.getProductById(id);
+      return Right(remoteProduct.toEntity());
+    } on ServerException {
+      return const Left(ServerFailure("Server Exception"));
+    } catch (_) {
+      return const Left(ServerFailure("Unknown server error"));
+    }
+  } else {
+    try {
+      final cachedProduct = await localDataSource.getProductById(id);
+      return Right(cachedProduct.toEntity());
+    } on CacheException {
+      return const Left(CacheFailure("Cache Exception"));
+    } catch (_) {
+      return const Left(CacheFailure("Unknown cache error"));
     }
   }
+}
+
 }

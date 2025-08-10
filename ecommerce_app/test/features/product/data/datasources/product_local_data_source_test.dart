@@ -21,8 +21,8 @@ void main() {
   });
 
   const testProducts = [
-    ProductModel(id: 1, name: 'Test', description: 'desc', imageURL: 'img', price: 99.99),
-    ProductModel(id: 2, name: 'Another', description: 'desc2', imageURL: 'img2', price: 49.99),
+    ProductModel(id: '1', name: 'Test', description: 'desc', imageURL: 'img', price: 99.99),
+    ProductModel(id: '2', name: 'Another', description: 'desc2', imageURL: 'img2', price: 49.99),
   ];
 
   final cachedList = testProducts.map((e) => jsonEncode(e.toJson())).toList();
@@ -68,7 +68,7 @@ void main() {
       when(mockSharedPreferences.getStringList(any)).thenReturn(cachedList);
 
       // Act
-      final result = await dataSource.getProductById(1);
+      final result = await dataSource.getProductById('1');
 
       // Assert
       expect(result, equals(testProducts[0]));
@@ -79,7 +79,7 @@ void main() {
       when(mockSharedPreferences.getStringList(any)).thenReturn(cachedList);
 
       // Assert
-      expect(() => dataSource.getProductById(999), throwsA(isA<CacheException>()));
+      expect(() => dataSource.getProductById('999'), throwsA(isA<CacheException>()));
     });
 
     test('should throw CacheException when cache is null', () async {
@@ -87,7 +87,7 @@ void main() {
       when(mockSharedPreferences.getStringList(any)).thenReturn(null);
 
       // Assert
-      expect(() => dataSource.getProductById(999), throwsA(isA<CacheException>()));
+      expect(() => dataSource.getProductById('999'), throwsA(isA<CacheException>()));
     });
   });
 }

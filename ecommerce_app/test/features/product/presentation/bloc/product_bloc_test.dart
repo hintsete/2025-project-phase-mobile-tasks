@@ -1,5 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
+import 'package:ecommerce_app/core/network/http.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -21,6 +22,7 @@ import 'product_bloc_test.mocks.dart';
   UpdateProductUseCase,
   ViewAllProductsUseCase,
   ViewSpecificProductUseCase,
+  HttpClient
 ])
 void main() {
   late ProductBlocBloc bloc;
@@ -36,6 +38,7 @@ void main() {
     mockUpdate = MockUpdateProductUseCase();
     mockFetchAll = MockViewAllProductsUseCase();
     mockFetchSingle = MockViewSpecificProductUseCase();
+    mockHttp=MockHttpClient();
 
     bloc = ProductBlocBloc(
       mockCreate,
@@ -43,11 +46,12 @@ void main() {
       mockUpdate,
       mockFetchAll,
       mockFetchSingle,
+      mockHttp
     );
   });
 
   final tProduct = Product(
-    id: 1,
+    id: '1',
     name: "Test Product",
     description: "Test Description",
     imageURL: "http://image.url",
@@ -91,7 +95,7 @@ void main() {
         when(mockFetchSingle.call(any)).thenAnswer((_) async => Right(tProduct));
         return bloc;
       },
-      act: (bloc) => bloc.add(GetSingleProductEvent(1)),
+      act: (bloc) => bloc.add(GetSingleProductEvent('1')),
       expect: () => [
         LoadingState(),
         LoadedSingleProductState(tProduct),
@@ -104,7 +108,7 @@ void main() {
         when(mockFetchSingle.call(any)).thenAnswer((_) async => Left(tFailure));
         return bloc;
       },
-      act: (bloc) => bloc.add(GetSingleProductEvent(1)),
+      act: (bloc) => bloc.add(GetSingleProductEvent('1')),
       expect: () => [
         LoadingState(),
         ErrorState(message: tFailure.message),
@@ -124,6 +128,7 @@ void main() {
       mockUpdate,
       mockFetchAll,
       mockFetchSingle,
+      mockHttp
     );
   },
   act: (bloc) async {
@@ -165,6 +170,7 @@ void main() {
       mockUpdate,
       mockFetchAll,
       mockFetchSingle,
+      mochHttp
     );
   },
   act: (bloc) async {
@@ -235,10 +241,11 @@ void main() {
       mockUpdate,
       mockFetchAll,
       mockFetchSingle,
+      mockHttp,
     );
   },
   act: (bloc) async {
-    bloc.add(DeleteProductEvent(1));
+    bloc.add(DeleteProductEvent('1'));
     await Future.delayed(const Duration(milliseconds: 10)); // give time for LoadAllProductsEvent to be added
   },
   wait: const Duration(milliseconds: 100), // allow chained events to emit
@@ -257,7 +264,7 @@ void main() {
       when(mockDelete.call(any)).thenAnswer((_) async => Left(tFailure));
       return bloc;
     },
-    act: (bloc) => bloc.add(DeleteProductEvent(1)),
+    act: (bloc) => bloc.add(DeleteProductEvent('1')),
     expect: () => [
       const LoadingState(), // this should be const
       ErrorState(message: tFailure.message), // not const since tFailure is runtime

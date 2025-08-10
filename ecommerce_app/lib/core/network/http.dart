@@ -1,11 +1,9 @@
 import 'dart:convert';
-
 import 'package:ecommerce_app/core/constants/api_constants.dart';
 import 'package:equatable/equatable.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
-
 
 enum HttpMethod { post, put }
 
@@ -31,8 +29,11 @@ class HttpResponse extends Equatable {
   final int statusCode;
   final String body;
 
-  const HttpResponse(
-      {this.reasonPhrase = '', required this.statusCode, required this.body});
+  const HttpResponse({
+    this.reasonPhrase = '',
+    required this.statusCode,
+    required this.body,
+  });
 
   @override
   List<Object> get props => [reasonPhrase, statusCode, body];
@@ -42,6 +43,7 @@ class HttpClient {
   final http.Client client;
   final http.MultipartRequest Function(HttpMethod, String) multipartRequestFactory;
   io.Socket? _socket;
+
   final Map<String, String> _defaultHeaders = {
     'Content-Type': 'application/json; charset=UTF-8',
   };
@@ -70,7 +72,6 @@ class HttpClient {
 
   Future<HttpResponse> get(String url) async {
     final response = await client.get(Uri.parse(url), headers: _defaultHeaders);
-
     return HttpResponse(
       statusCode: response.statusCode,
       body: response.body,
@@ -83,7 +84,6 @@ class HttpClient {
       body: jsonEncode(body),
       headers: _defaultHeaders,
     );
-
     return HttpResponse(
       statusCode: response.statusCode,
       body: response.body,
@@ -96,7 +96,6 @@ class HttpClient {
       body: jsonEncode(body),
       headers: _defaultHeaders,
     );
-
     return HttpResponse(
       statusCode: response.statusCode,
       body: response.body,
@@ -106,7 +105,6 @@ class HttpClient {
   Future<HttpResponse> delete(String url) async {
     final response =
         await client.delete(Uri.parse(url), headers: _defaultHeaders);
-
     return HttpResponse(
       statusCode: response.statusCode,
       body: response.body,
@@ -121,24 +119,32 @@ class HttpClient {
   ) async {
     var request = multipartRequestFactory(method, url);
 
-    request.headers.addEntries(_defaultHeaders.entries);
+    // Copy headers but REMOVE Content-Type for multipart
+    final multipartHeaders = Map<String, String>.from(_defaultHeaders);
+    multipartHeaders.remove('Content-Type');
+    request.headers.addEntries(multipartHeaders.entries);
 
+    // Add text fields
     request.fields.addAll(body);
 
+    // Add files
     for (var file in files) {
-      request.files.add(await http.MultipartFile.fromPath(
-        file.key,
-        file.path,
-        contentType: _inferMediaType(file.path),
-      ));
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          file.key, // Ensure matches backend key (likely 'file')
+          file.path,
+          contentType: _inferMediaType(file.path),
+        ),
+      );
     }
 
+    // Send request
     http.StreamedResponse streamedResponse = await request.send();
+    final responseBody = await streamedResponse.stream.bytesToString();
 
-    final response = await streamedResponse.stream.bytesToString();
     return HttpResponse(
       statusCode: streamedResponse.statusCode,
-      body: response,
+      body: responseBody,
       reasonPhrase: streamedResponse.reasonPhrase ?? '',
     );
   }
@@ -151,7 +157,7 @@ class HttpClient {
     } else if (path.endsWith('.gif')) {
       return MediaType('image', 'gif');
     } else {
-      return MediaType('image', 'jpeg');
+      return MediaType('application', 'octet-stream');
     }
   }
 }

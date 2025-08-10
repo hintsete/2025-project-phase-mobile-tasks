@@ -21,16 +21,16 @@ void main() {
   });
   test('return a product by its id', ()async {
     //arrange
-    const testId=1;
+    const testId='1';
     const product=Product(
-      id: testId, 
+      id: 'testId', 
       name: 'name', 
       description: 'description',
       imageURL: 'imageURL', 
       price: 12.00);
     when(repository.getProductById(testId)).thenAnswer((_)async =>const Right(product));
     //act
-    final result=await usecase( testId);
+    final result=await usecase( 'testId');
     //assert
     expect(result, const Right(product));
     verify(repository.getProductById(testId)).called(1);

@@ -8,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -27,10 +26,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home"),
+        title: const Text("Home"), //added the logout button
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout_rounded),
             onPressed: () {
               context.read<AuthBloc>().add(AuthLogoutRequested());
             },
@@ -39,7 +38,6 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to Add Product route (no product passed)
           context.push(Routes.addProduct);
         },
         backgroundColor: Colors.blue,
@@ -66,7 +64,7 @@ class _HomePageState extends State<HomePage> {
               TitleBar(
                 onSearchTap: () {
                   context.read<ProductBlocBloc>().add(LoadAllProductsEvent());
-                  context.push('/search');
+                  context.push(Routes.search);
                 },
               ),
               const SizedBox(height: 16),
@@ -91,9 +89,8 @@ class _HomePageState extends State<HomePage> {
                           final product = products[idx];
                           return GestureDetector(
                             onTap: () {
-                              // Navigate to Update Product route (passing product)
                               context.push(
-                                Routes.updateProduct,
+                                Routes.productDetails,
                                 extra: product,
                               );
                             },

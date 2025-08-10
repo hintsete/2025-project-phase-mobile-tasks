@@ -24,7 +24,7 @@ void main() {
     () async {
       // arrange
       const product = Product(
-        id: 1,
+        id: '1',
         name: 'test product',
         description: 'product description',
         imageURL: 'imageURL',

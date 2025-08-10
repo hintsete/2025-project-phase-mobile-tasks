@@ -9,7 +9,7 @@ import '../entities/product.dart';
 import '../repositories/product_repository.dart';
 // import 'usecase.dart';
 
-class ViewSpecificProductUseCase extends Usecase<Product,int> {
+class ViewSpecificProductUseCase extends Usecase<Product,String> {
   final ProductRepository repository;
   
   ViewSpecificProductUseCase(this.repository);
@@ -17,7 +17,7 @@ class ViewSpecificProductUseCase extends Usecase<Product,int> {
 
 
   @override
-  Future<Either<Failure,Product>> call(int id){
+  Future<Either<Failure,Product>> call(String id){
     return repository.getProductById(id);
   }
 }

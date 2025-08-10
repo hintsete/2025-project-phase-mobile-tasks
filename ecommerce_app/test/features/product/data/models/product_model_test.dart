@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../../../fixtures/featuer_reader.dart';
 
 void main(){
-  final testProductModel=ProductModel(id: 1, name: 'name', description: 'description', imageURL: 'imageURL', price: 12.00);
+  final testProductModel=ProductModel(id: '1', name: 'name', description: 'description', imageURL: 'imageURL', price: 12.00);
   // test('', () async{
   //   //arrange
   //   //act

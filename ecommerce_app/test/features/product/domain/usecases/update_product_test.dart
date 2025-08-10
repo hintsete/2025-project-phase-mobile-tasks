@@ -23,7 +23,7 @@ void main() {
     //arrange
     // const testId=1;
     const product=Product(
-      id: 1, 
+      id: '1', 
       name: 'name', 
       description: 'description', 
       imageURL: 'imageURL', 

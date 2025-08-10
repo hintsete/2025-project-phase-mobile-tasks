@@ -12,6 +12,18 @@ import 'package:ecommerce_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:ecommerce_app/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:ecommerce_app/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:ecommerce_app/features/auth/presentation/bloc/auth_bloc.dart';
+// import 'package:ecommerce_app/features/chat/data/datasources/local/chat_local_data_source.dart';
+// import 'package:ecommerce_app/features/chat/data/datasources/local/chat_local_data_source_impl.dart';
+// import 'package:ecommerce_app/features/chat/data/datasources/remote/chat_remote_data_source.dart';
+// import 'package:ecommerce_app/features/chat/data/datasources/remote/chat_remote_data_source_impl.dart';
+// import 'package:ecommerce_app/features/chat/data/repositories/chat_repository_impl.dart';
+// import 'package:ecommerce_app/features/chat/domain/repositories/chat_repository.dart';
+// import 'package:ecommerce_app/features/chat/domain/usecases/get_chat_messages.dart';
+// import 'package:ecommerce_app/features/chat/domain/usecases/get_my_chats.dart';
+// import 'package:ecommerce_app/features/chat/domain/usecases/initiate_chat.dart';
+// import 'package:ecommerce_app/features/chat/domain/usecases/send_message.dart';
+// import 'package:ecommerce_app/features/chat/presentation/bloc/chat/chat_bloc.dart';
+// import 'package:ecommerce_app/features/chat/presentation/bloc/message/message_bloc.dart';
 
 import 'package:ecommerce_app/features/product/data/datasources/product_local_data_source.dart';
 import 'package:ecommerce_app/features/product/data/datasources/product_remote_data_source.dart';
@@ -58,6 +70,7 @@ Future<void> init() async {
         sl(), // updateProductUseCase
         sl(), // viewAllProductsUseCase
         sl(), // viewSpecificProductUseCase
+        sl()
       ));
 
   // Use Cases
@@ -121,4 +134,39 @@ Future<void> init() async {
   sl.registerLazySingleton<AuthLocalDataSource>(
     () => AuthLocalDataSourceImpl(sharedPreferences: sl()),
   );
+
+
+  // Chat Feature Registration
+// ------------------------
+
+// // Bloc
+//   sl.registerFactory(() => ChatsBloc(
+//         getMyChats: sl(),
+//         initiateChat: sl(),
+//       ));
+//   sl.registerFactory(() => MessageBloc(
+//         getChatMessages: sl(),
+//         sendMessage: sl(),
+//       ));
+
+//   // Use cases
+//   sl.registerLazySingleton(() => GetMyChats(sl()));
+//   sl.registerLazySingleton(() => InitiateChat(sl()));
+//   sl.registerLazySingleton(() => GetChatMessages(sl()));
+//   sl.registerLazySingleton(() => SendMessage(sl()));
+
+//   // Repository
+//   sl.registerLazySingleton<ChatRepository>(() => ChatRepositoryImpl(
+//       networkInfo: sl(),
+//       remoteDataSource: sl(),
+//       localDataSource: sl()));
+
+//   // Data
+//   sl.registerLazySingleton<ChatLocalDataSource>(
+//       () => ChatLocalDataSourceImpl(sharedPreferences: sl()));
+//   sl.registerLazySingleton<ChatRemoteDataSource>(
+//       () => ChatRemoteDataSourceImpl(client: sl()));
+
+
+// }
 }

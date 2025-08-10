@@ -1,35 +1,35 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/entities/product.dart';
-import '../bloc/product_bloc_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:ecommerce_app/features/product/presentation/bloc/product_bloc_bloc.dart';
+import 'package:ecommerce_app/features/product/domain/entities/product.dart';
 
-class AddUpdatePage extends StatefulWidget {
-  final Product? product; // null = add mode
-  const AddUpdatePage({super.key, this.product});
+class AddUpdateProductPage extends StatefulWidget {
+  final Product? product;
+
+  const AddUpdateProductPage({super.key, this.product});
 
   @override
-  State<AddUpdatePage> createState() => _AddUpdatePageState();
+  State<AddUpdateProductPage> createState() => _AddUpdateProductPageState();
 }
 
-class _AddUpdatePageState extends State<AddUpdatePage> {
+class _AddUpdateProductPageState extends State<AddUpdateProductPage> {
   final _formKey = GlobalKey<FormState>();
-
-  late TextEditingController _nameController;
-  late TextEditingController _descriptionController;
-  late TextEditingController _priceController;
-  late String _imageUrl;
-
-  bool get isEditMode => widget.product != null;
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _priceController = TextEditingController();
+  File? _imageFile;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.product?.name ?? '');
-    _descriptionController = TextEditingController(text: widget.product?.description ?? '');
-    _priceController = TextEditingController(
-      text: widget.product?.price != null ? widget.product!.price.toString() : '',
-    );
-    _imageUrl = widget.product?.imageURL ?? '';
+    if (widget.product != null) {
+      _nameController.text = widget.product!.name;
+      _descriptionController.text = widget.product!.description;
+      _priceController.text = widget.product!.price.toString();
+    }
   }
 
   @override
@@ -40,162 +40,220 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
     super.dispose();
   }
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      final product = Product(
-        id: isEditMode ? widget.product!.id : 0,
-        name: _nameController.text.trim(),
-        description: _descriptionController.text.trim(),
-        imageURL: _imageUrl.trim(),
-        price: double.tryParse(_priceController.text.trim()) ?? 0,
-      );
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
 
-      if (isEditMode) {
-        context.read<ProductBlocBloc>().add(UpdateProductEvent(product));
+ void _submitForm() {
+  if (_formKey.currentState!.validate()) {
+    // Validate that an image is selected for new products
+    if (widget.product == null && _imageFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select an image for the product')),
+      );
+      return;
+    }
+
+    // For existing products being updated, use existing image if no new one selected
+    final imageToUse = _imageFile?.path ?? widget.product?.imageURL ?? '';
+
+    final product = Product(
+      id: widget.product?.id ?? '',
+      name: _nameController.text,
+      description: _descriptionController.text,
+      price: double.parse(_priceController.text),
+      imageURL: imageToUse,
+    );
+
+    // Show loading indicator
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Processing...'),
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+
+    if (widget.product == null) {
+      // Use the new event for image upload
+      if (_imageFile != null) {
+        context.read<ProductBlocBloc>().add(
+          CreateProductWithImageEvent(
+            name: _nameController.text,
+            description: _descriptionController.text,
+            price: double.parse(_priceController.text),
+            imageFile: _imageFile!,
+          ),
+        );
       } else {
         context.read<ProductBlocBloc>().add(CreateProductEvent(product));
       }
+    } else {
+      context.read<ProductBlocBloc>().add(UpdateProductEvent(product));
+    }
+  }
+}
 
-      Navigator.pop(context);
+  Widget _buildImagePreview() {
+    if (_imageFile != null) {
+      return Image.file(_imageFile!, height: 200, width: double.infinity, fit: BoxFit.cover);
+    } else if (widget.product?.imageURL != null) {
+      return Image.network(
+        widget.product!.imageURL,
+        height: 200,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+      );
+    } else {
+      return _buildPlaceholder();
     }
   }
 
-  void _deleteProduct() {
-    if (isEditMode) {
-      context.read<ProductBlocBloc>().add(DeleteProductEvent(widget.product!.id));
-      Navigator.pop(context);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditMode ? 'Update Product' : 'Add Product'),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: BlocListener<ProductBlocBloc, ProductBlocState>(
-        listener: (context, state) {
-          if (state is ErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
-          }
-        },
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    // TODO: implement image picker
-                  },
-                  child: Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: _imageUrl.isEmpty
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(Icons.image, size: 40, color: Colors.grey),
-                              SizedBox(height: 8),
-                              Text("Upload Image",
-                                  style: TextStyle(color: Colors.grey)),
-                            ],
-                          )
-                        : ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(_imageUrl, fit: BoxFit.cover),
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text("Name", style: TextStyle(fontWeight: FontWeight.w500)),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    hintText: 'Product Title',
-                    filled: true,
-                  ),
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter a name' : null,
-                ),
-                const SizedBox(height: 16),
-                Text("Price", style: TextStyle(fontWeight: FontWeight.w500)),
-                TextFormField(
-                  controller: _priceController,
-                  decoration: const InputDecoration(
-                    hintText: 'Price',
-                    filled: true,
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a price';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Enter a valid number';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                Text("Description", style: TextStyle(fontWeight: FontWeight.w500)),
-                TextFormField(
-                  controller: _descriptionController,
-                  decoration: const InputDecoration(
-                    hintText: 'Description',
-                    filled: true,
-                  ),
-                  maxLines: 3,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter a description' : null,
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    isEditMode ? 'UPDATE' : 'ADD',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                if (isEditMode)
-                  OutlinedButton(
-                    onPressed: _deleteProduct,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                      side: const BorderSide(color: Colors.red),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text('DELETE', style: TextStyle(fontSize: 16)),
-                  ),
-              ],
-            ),
+  Widget _buildPlaceholder() {
+    return Container(
+      height: 200,
+      width: double.infinity,
+      color: Colors.grey[200],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.image, size: 50, color: Colors.grey),
+          const SizedBox(height: 8),
+          Text(
+            'Tap to add image',
+            style: TextStyle(color: Colors.grey[600]),
           ),
-        ),
+        ],
       ),
     );
   }
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(widget.product == null ? 'Add Product' : 'Edit Product'),
+    ),
+    body: BlocListener<ProductBlocBloc, ProductBlocState>(
+      listener: (context, state) {
+        if (state is ErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        } else if (state is SuccessState) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          Navigator.of(context).pop(); // Navigate back to home page
+        }
+      },
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              // Image Picker
+              GestureDetector(
+                onTap: _pickImage,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: _buildImagePreview(),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Name Field
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Product Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter product name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Price Field
+              TextFormField(
+                controller: _priceController,
+                decoration: const InputDecoration(
+                  labelText: 'Price',
+                  border: OutlineInputBorder(),
+                  prefixText: '\$',
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter price';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid number';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Description Field
+              TextFormField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter description';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 32),
+
+              // Submit Button
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 2,
+                  ),
+                  onPressed: _submitForm,
+                  child: Text(
+                    widget.product == null ? 'Add Product' : 'Update Product',
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
 }

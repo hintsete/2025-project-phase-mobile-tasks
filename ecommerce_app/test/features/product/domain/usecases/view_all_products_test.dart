@@ -26,14 +26,14 @@ void main() {
     //arrange
     const products = [
       Product(
-        id: 1,
+        id: '1',
         name: 'Test Product 1',
         description: 'Desc 1',
         imageURL: 'image1.jpg',
         price: 10.0,
       ),
       Product(
-        id: 2,
+        id: '2',
         name: 'Test Product 2',
         description: 'Desc 2',
         imageURL: 'image2.jpg',

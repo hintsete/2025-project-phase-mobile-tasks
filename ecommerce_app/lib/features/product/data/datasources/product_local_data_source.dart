@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 abstract class ProductLocalDataSource {
   //to cache and to get the cache
   Future<List<ProductModel>> getAllProducts();
-  Future<ProductModel>getProductById(int id);
+  Future<ProductModel>getProductById(String id);
   Future<void> cacheProducts(List<ProductModel> products);
 }
 
@@ -40,7 +40,7 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource{
   }
 
   @override
-  Future<ProductModel> getProductById(int id) async{
+  Future<ProductModel> getProductById(String id) async{
   
     final jsonList=sharedPreferences.getStringList(cachedProductKey);
     if (jsonList!= null){

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ecommerce_app/core/constants/api_constants.dart';
 import 'package:ecommerce_app/core/error/exception.dart';
+import 'package:ecommerce_app/core/network/http.dart';
 import 'package:ecommerce_app/features/product/data/datasources/product_remote_data_source.dart';
 import 'package:ecommerce_app/features/product/data/models/Product_model.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,11 +21,11 @@ void main() {
 
   setUp(() {
     mockHttpClient = MockClient();
-    dataSource = ProductRemoteDataSourceImpl(mockHttpClient);
+    dataSource = ProductRemoteDataSourceImpl(mockHttpClient as HttpClient);
   });
 
   const tProductModel = ProductModel(
-    id: 1,
+    id: '1',
     name: 'Test',
     description: 'desc',
     imageURL: 'img.png',
@@ -56,7 +57,7 @@ void main() {
       when(mockHttpClient.get(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')))
           .thenAnswer((_) async => http.Response(json.encode(tProductJson), 200));
 
-      final result = await dataSource.getProductById(1);
+      final result = await dataSource.getProductById('1');
 
       expect(result, isA<ProductModel>());
       verify(mockHttpClient.get(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')));
@@ -66,7 +67,7 @@ void main() {
       when(mockHttpClient.get(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')))
           .thenAnswer((_) async => http.Response('Not found', 404));
 
-      expect(() => dataSource.getProductById(1), throwsA(isA<ServerException>()));
+      expect(() => dataSource.getProductById('1'), throwsA(isA<ServerException>()));
     });
   });
 
@@ -117,7 +118,7 @@ void main() {
       when(mockHttpClient.delete(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')))
           .thenAnswer((_) async => http.Response('', 204));
 
-      await dataSource.deleteProduct(1);
+      await dataSource.deleteProduct('1');
 
       verify(mockHttpClient.delete(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')));
     });
@@ -126,7 +127,7 @@ void main() {
       when(mockHttpClient.delete(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')))
           .thenAnswer((_) async => http.Response('Not allowed', 403));
 
-      expect(() => dataSource.deleteProduct(1), throwsA(isA<ServerException>()));
+      expect(() => dataSource.deleteProduct('1'), throwsA(isA<ServerException>()));
     });
   });
 }

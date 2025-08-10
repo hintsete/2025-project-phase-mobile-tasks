@@ -44,4 +44,12 @@ class ErrorState extends ProductBlocState {
   @override
   List<Object?> get props => [message];
 }
+class SuccessState extends ProductBlocState {
+  final String message;
+  const SuccessState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
 
