@@ -86,67 +86,6 @@ final router = GoRouter(
         );
       },
     ),
-    // GoRoute(
-    //   path: Routes.chats,
-    //   builder: (context, state) {
-    //     // Assuming you pass currentUserId as extra
-    //     final currentUserId = state.extra as String;
-    //     return ChatListPage(currentUserId: currentUserId);
-    //   },
-    // ),
-    // GoRoute(
-    //   path: Routes.chatDetail,
-    //   builder: (context, state) {
-    //     // Extract both chat and currentUserId from extra
-    //     final args = state.extra as Map<String, dynamic>;
-    //     return ChatPage(
-    //       chat: args['chat'] as Chat,
-    //       currentUserId: args['currentUserId'] as String,
-    //     );
-    //   },
-    // ),
-    // GoRoute(
-    //   path: Routes.addProduct,
-    //   builder: (context, state) => const AddUpdatePage(),
-    // ),
-    // GoRoute(
-    //   path: Routes.updateProduct,
-    //   builder: (context, state) {
-    //     final product = state.extra as Product;
-    //     return AddUpdatePage(product: product);
-    //   },
-    // ),
-
    
-
-    //
-    // GoRoute(
-    //   path: Routes.home,
-    //   builder: (context, state) => const HomePage(),
-    // ),
-
-    // //
-    // GoRoute(
-    //   path: Routes.productDetail,
-    //   builder: (context, state) {
-    //     final product = state.extra as Product;
-    //     return ProductDetailPage(product: product);
-    //   },
-    // ),
-
-    // //
-    // GoRoute(
-    //   path: Routes.addProduct,
-    //   builder: (context, state) => const AddProductPage(),
-    // ),
-
-    // //
-    // GoRoute(
-    //   path: Routes.updateProduct,
-    //   builder: (context, state) {
-    //     final product = state.extra as Product;
-    //     return UpdateProductPage(product: product);
-    //   },
-    // ),
   ],
 );
