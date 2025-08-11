@@ -12,18 +12,19 @@ import 'package:ecommerce_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:ecommerce_app/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:ecommerce_app/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:ecommerce_app/features/auth/presentation/bloc/auth_bloc.dart';
-// import 'package:ecommerce_app/features/chat/data/datasources/local/chat_local_data_source.dart';
-// import 'package:ecommerce_app/features/chat/data/datasources/local/chat_local_data_source_impl.dart';
-// import 'package:ecommerce_app/features/chat/data/datasources/remote/chat_remote_data_source.dart';
-// import 'package:ecommerce_app/features/chat/data/datasources/remote/chat_remote_data_source_impl.dart';
-// import 'package:ecommerce_app/features/chat/data/repositories/chat_repository_impl.dart';
-// import 'package:ecommerce_app/features/chat/domain/repositories/chat_repository.dart';
-// import 'package:ecommerce_app/features/chat/domain/usecases/get_chat_messages.dart';
-// import 'package:ecommerce_app/features/chat/domain/usecases/get_my_chats.dart';
-// import 'package:ecommerce_app/features/chat/domain/usecases/initiate_chat.dart';
-// import 'package:ecommerce_app/features/chat/domain/usecases/send_message.dart';
-// import 'package:ecommerce_app/features/chat/presentation/bloc/chat/chat_bloc.dart';
-// import 'package:ecommerce_app/features/chat/presentation/bloc/message/message_bloc.dart';
+import 'package:ecommerce_app/features/chat/data/datasources/local/chat_local_data_source.dart';
+import 'package:ecommerce_app/features/chat/data/datasources/local/chat_local_data_source_impl.dart';
+import 'package:ecommerce_app/features/chat/data/datasources/remote/chat_remote_data_source.dart';
+import 'package:ecommerce_app/features/chat/data/datasources/remote/chat_remote_data_source_impl.dart';
+import 'package:ecommerce_app/features/chat/data/repositories/chat_repository_impl.dart';
+import 'package:ecommerce_app/features/chat/domain/entities/chat.dart';
+import 'package:ecommerce_app/features/chat/domain/repositories/chat_repository.dart';
+import 'package:ecommerce_app/features/chat/domain/usecases/get_chat_messages.dart';
+import 'package:ecommerce_app/features/chat/domain/usecases/get_my_chats.dart';
+import 'package:ecommerce_app/features/chat/domain/usecases/initiate_chat.dart';
+import 'package:ecommerce_app/features/chat/domain/usecases/send_message.dart';
+import 'package:ecommerce_app/features/chat/presentation/bloc/chat/chat_bloc.dart';
+import 'package:ecommerce_app/features/chat/presentation/bloc/message/message_bloc.dart';
 
 import 'package:ecommerce_app/features/product/data/datasources/product_local_data_source.dart';
 import 'package:ecommerce_app/features/product/data/datasources/product_remote_data_source.dart';
@@ -166,7 +167,43 @@ Future<void> init() async {
 //       () => ChatLocalDataSourceImpl(sharedPreferences: sl()));
 //   sl.registerLazySingleton<ChatRemoteDataSource>(
 //       () => ChatRemoteDataSourceImpl(client: sl()));
+// Data Sources
+  sl.registerLazySingleton<ChatRemoteDataSource>(
+    () => ChatRemoteDataSourceImpl(client: sl()),
+  );
+
+  sl.registerLazySingleton<ChatLocalDataSource>(
+    () => ChatLocalDataSourceImpl(sharedPreferences: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<ChatRepository>(
+    () => ChatRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use Cases
+  sl.registerLazySingleton(() => GetMyChats(sl<ChatRepository>()));
+  sl.registerLazySingleton(() => InitiateChat(sl<ChatRepository>()));
+  sl.registerLazySingleton(() => GetChatMessages(sl<ChatRepository>()));
+  sl.registerLazySingleton(() => SendMessage(sl<ChatRepository>()));
+
+  // Blocs
+  sl.registerFactory(() => ChatsBloc(
+    getMyChats: sl<GetMyChats>(),
+    initiateChat: sl<InitiateChat>(),
+  ));
+
+  // Updated MessageBloc registration with parameter support
+  sl.registerFactoryParam<MessageBloc, Chat, void>((chat, _) {
+    return MessageBloc(
+      getChatMessages: sl<GetChatMessages>(),
+      sendMessage: sl<SendMessage>(),
+    )..add(MessageSocketConnectionRequested(chat));
+  });
 
 
-// }
 }

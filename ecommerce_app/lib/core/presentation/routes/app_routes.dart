@@ -9,6 +9,7 @@ class Routes {
   static const updateProduct = '/update-product';
   static const productDetails = '/product-details';
   static const search = '/search';
-
+  static const chats = '/chats';
+  static const chatDetail = '/chat-detail';
 
 }

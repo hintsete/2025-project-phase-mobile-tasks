@@ -29,6 +29,12 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Home"), //added the logout button
         actions: [
           IconButton(
+            icon: const Icon(Icons.chat_bubble_outline),
+            onPressed: () {
+              context.push(Routes.chats); // navigate to chat list page
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.logout_rounded),
             onPressed: () {
               context.read<AuthBloc>().add(AuthLogoutRequested());

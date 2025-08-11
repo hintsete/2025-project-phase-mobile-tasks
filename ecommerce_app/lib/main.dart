@@ -1,22 +1,18 @@
+
 import 'package:ecommerce_app/features/product/presentation/bloc/product_bloc_bloc.dart';
+import 'package:ecommerce_app/features/chat/presentation/bloc/chat/chat_bloc.dart'; // Add this import
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'core/presentation/routes/router.dart'; // your go_router config
+import 'core/presentation/routes/router.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
-
 import 'injection_container.dart' as di;
 import 'bloc_observer.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Setup Bloc observer (for debugging Bloc state transitions)
   Bloc.observer = SimpleBlocObserver();
-
-  // Initialize dependency injection
   await di.init();
-
   runApp(const App());
 }
 
@@ -28,18 +24,21 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<ProductBlocBloc>(
-          create: (_) =>
-              di.sl<ProductBlocBloc>()..add(LoadAllProductsEvent()),
+          create: (_) => di.sl<ProductBlocBloc>()..add(LoadAllProductsEvent()),
         ),
         BlocProvider<AuthBloc>(
-          create: (_) =>
-              di.sl<AuthBloc>()..add(const AuthLoadRequested()),
+          create: (_) => di.sl<AuthBloc>()..add(const AuthLoadRequested()),
         ),
+        // Add ChatsBloc provider
+        BlocProvider<ChatsBloc>(
+          create: (_) => di.sl<ChatsBloc>()..add(ChatsLoadRequested()),
+        ),
+        
       ],
       child: MaterialApp.router(
         title: 'Ecommerce App',
         debugShowCheckedModeBanner: false,
-        routerConfig: router, // <-- Your GoRouter config
+        routerConfig: router,
         theme: ThemeData(
           colorScheme: const ColorScheme(
             brightness: Brightness.light,
