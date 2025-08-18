@@ -26,7 +26,7 @@ void main(){
 
   test('should logout the user successfully', ()async{
     //arrange
-    when(repository.logout()).thenAnswer((_)async=> Right(null));
+    when(repository.logout()).thenAnswer((_)async=>const  Right(unit));
     //act
     final result=await usecase(NoParams());
 

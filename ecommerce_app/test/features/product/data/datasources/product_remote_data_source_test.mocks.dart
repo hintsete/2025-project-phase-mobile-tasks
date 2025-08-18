@@ -3,13 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
-import 'dart:convert' as _i4;
-import 'dart:typed_data' as _i6;
+import 'dart:async' as _i5;
 
+import 'package:ecommerce_app/core/network/http.dart' as _i4;
 import 'package:http/http.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:socket_io_client/socket_io_client.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -25,195 +24,125 @@ import 'package:mockito/src/dummies.dart' as _i5;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeResponse_0 extends _i1.SmartFake implements _i2.Response {
-  _FakeResponse_0(Object parent, Invocation parentInvocation)
+class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
+  _FakeClient_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeStreamedResponse_1 extends _i1.SmartFake
-    implements _i2.StreamedResponse {
-  _FakeStreamedResponse_1(Object parent, Invocation parentInvocation)
+class _FakeMultipartRequest_1 extends _i1.SmartFake
+    implements _i2.MultipartRequest {
+  _FakeMultipartRequest_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-/// A class which mocks [Client].
+class _FakeSocket_2 extends _i1.SmartFake implements _i3.Socket {
+  _FakeSocket_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeHttpResponse_3 extends _i1.SmartFake implements _i4.HttpResponse {
+  _FakeHttpResponse_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+/// A class which mocks [HttpClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockClient extends _i1.Mock implements _i2.Client {
-  MockClient() {
+class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
+  MockHttpClient() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<_i2.Response> head(Uri? url, {Map<String, String>? headers}) =>
+  _i2.Client get client =>
       (super.noSuchMethod(
-            Invocation.method(#head, [url], {#headers: headers}),
-            returnValue: _i3.Future<_i2.Response>.value(
-              _FakeResponse_0(
-                this,
-                Invocation.method(#head, [url], {#headers: headers}),
-              ),
-            ),
+            Invocation.getter(#client),
+            returnValue: _FakeClient_0(this, Invocation.getter(#client)),
           )
-          as _i3.Future<_i2.Response>);
+          as _i2.Client);
 
   @override
-  _i3.Future<_i2.Response> get(Uri? url, {Map<String, String>? headers}) =>
+  _i2.MultipartRequest Function(_i4.HttpMethod, String)
+  get multipartRequestFactory =>
       (super.noSuchMethod(
-            Invocation.method(#get, [url], {#headers: headers}),
-            returnValue: _i3.Future<_i2.Response>.value(
-              _FakeResponse_0(
-                this,
-                Invocation.method(#get, [url], {#headers: headers}),
-              ),
-            ),
-          )
-          as _i3.Future<_i2.Response>);
-
-  @override
-  _i3.Future<_i2.Response> post(
-    Uri? url, {
-    Map<String, String>? headers,
-    Object? body,
-    _i4.Encoding? encoding,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(
-              #post,
-              [url],
-              {#headers: headers, #body: body, #encoding: encoding},
-            ),
-            returnValue: _i3.Future<_i2.Response>.value(
-              _FakeResponse_0(
-                this,
-                Invocation.method(
-                  #post,
-                  [url],
-                  {#headers: headers, #body: body, #encoding: encoding},
+            Invocation.getter(#multipartRequestFactory),
+            returnValue:
+                (_i4.HttpMethod __p0, String __p1) => _FakeMultipartRequest_1(
+                  this,
+                  Invocation.getter(#multipartRequestFactory),
                 ),
-              ),
-            ),
           )
-          as _i3.Future<_i2.Response>);
+          as _i2.MultipartRequest Function(_i4.HttpMethod, String));
 
   @override
-  _i3.Future<_i2.Response> put(
-    Uri? url, {
-    Map<String, String>? headers,
-    Object? body,
-    _i4.Encoding? encoding,
-  }) =>
+  _i3.Socket get socket =>
       (super.noSuchMethod(
-            Invocation.method(
-              #put,
-              [url],
-              {#headers: headers, #body: body, #encoding: encoding},
-            ),
-            returnValue: _i3.Future<_i2.Response>.value(
-              _FakeResponse_0(
-                this,
-                Invocation.method(
-                  #put,
-                  [url],
-                  {#headers: headers, #body: body, #encoding: encoding},
-                ),
-              ),
-            ),
+            Invocation.getter(#socket),
+            returnValue: _FakeSocket_2(this, Invocation.getter(#socket)),
           )
-          as _i3.Future<_i2.Response>);
+          as _i3.Socket);
 
   @override
-  _i3.Future<_i2.Response> patch(
-    Uri? url, {
-    Map<String, String>? headers,
-    Object? body,
-    _i4.Encoding? encoding,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(
-              #patch,
-              [url],
-              {#headers: headers, #body: body, #encoding: encoding},
-            ),
-            returnValue: _i3.Future<_i2.Response>.value(
-              _FakeResponse_0(
-                this,
-                Invocation.method(
-                  #patch,
-                  [url],
-                  {#headers: headers, #body: body, #encoding: encoding},
-                ),
-              ),
-            ),
-          )
-          as _i3.Future<_i2.Response>);
-
-  @override
-  _i3.Future<_i2.Response> delete(
-    Uri? url, {
-    Map<String, String>? headers,
-    Object? body,
-    _i4.Encoding? encoding,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(
-              #delete,
-              [url],
-              {#headers: headers, #body: body, #encoding: encoding},
-            ),
-            returnValue: _i3.Future<_i2.Response>.value(
-              _FakeResponse_0(
-                this,
-                Invocation.method(
-                  #delete,
-                  [url],
-                  {#headers: headers, #body: body, #encoding: encoding},
-                ),
-              ),
-            ),
-          )
-          as _i3.Future<_i2.Response>);
-
-  @override
-  _i3.Future<String> read(Uri? url, {Map<String, String>? headers}) =>
-      (super.noSuchMethod(
-            Invocation.method(#read, [url], {#headers: headers}),
-            returnValue: _i3.Future<String>.value(
-              _i5.dummyValue<String>(
-                this,
-                Invocation.method(#read, [url], {#headers: headers}),
-              ),
-            ),
-          )
-          as _i3.Future<String>);
-
-  @override
-  _i3.Future<_i6.Uint8List> readBytes(
-    Uri? url, {
-    Map<String, String>? headers,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(#readBytes, [url], {#headers: headers}),
-            returnValue: _i3.Future<_i6.Uint8List>.value(_i6.Uint8List(0)),
-          )
-          as _i3.Future<_i6.Uint8List>);
-
-  @override
-  _i3.Future<_i2.StreamedResponse> send(_i2.BaseRequest? request) =>
-      (super.noSuchMethod(
-            Invocation.method(#send, [request]),
-            returnValue: _i3.Future<_i2.StreamedResponse>.value(
-              _FakeStreamedResponse_1(
-                this,
-                Invocation.method(#send, [request]),
-              ),
-            ),
-          )
-          as _i3.Future<_i2.StreamedResponse>);
-
-  @override
-  void close() => super.noSuchMethod(
-    Invocation.method(#close, []),
+  set authToken(String? token) => super.noSuchMethod(
+    Invocation.setter(#authToken, token),
     returnValueForMissingStub: null,
   );
+
+  @override
+  _i5.Future<_i4.HttpResponse> get(String? url) =>
+      (super.noSuchMethod(
+            Invocation.method(#get, [url]),
+            returnValue: _i5.Future<_i4.HttpResponse>.value(
+              _FakeHttpResponse_3(this, Invocation.method(#get, [url])),
+            ),
+          )
+          as _i5.Future<_i4.HttpResponse>);
+
+  @override
+  _i5.Future<_i4.HttpResponse> post(String? url, Map<String, dynamic>? body) =>
+      (super.noSuchMethod(
+            Invocation.method(#post, [url, body]),
+            returnValue: _i5.Future<_i4.HttpResponse>.value(
+              _FakeHttpResponse_3(this, Invocation.method(#post, [url, body])),
+            ),
+          )
+          as _i5.Future<_i4.HttpResponse>);
+
+  @override
+  _i5.Future<_i4.HttpResponse> put(String? url, Map<String, dynamic>? body) =>
+      (super.noSuchMethod(
+            Invocation.method(#put, [url, body]),
+            returnValue: _i5.Future<_i4.HttpResponse>.value(
+              _FakeHttpResponse_3(this, Invocation.method(#put, [url, body])),
+            ),
+          )
+          as _i5.Future<_i4.HttpResponse>);
+
+  @override
+  _i5.Future<_i4.HttpResponse> delete(String? url) =>
+      (super.noSuchMethod(
+            Invocation.method(#delete, [url]),
+            returnValue: _i5.Future<_i4.HttpResponse>.value(
+              _FakeHttpResponse_3(this, Invocation.method(#delete, [url])),
+            ),
+          )
+          as _i5.Future<_i4.HttpResponse>);
+
+  @override
+  _i5.Future<_i4.HttpResponse> uploadFile(
+    String? url,
+    _i4.HttpMethod? method,
+    Map<String, String>? body,
+    List<_i4.UploadFile>? files,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#uploadFile, [url, method, body, files]),
+            returnValue: _i5.Future<_i4.HttpResponse>.value(
+              _FakeHttpResponse_3(
+                this,
+                Invocation.method(#uploadFile, [url, method, body, files]),
+              ),
+            ),
+          )
+          as _i5.Future<_i4.HttpResponse>);
 }

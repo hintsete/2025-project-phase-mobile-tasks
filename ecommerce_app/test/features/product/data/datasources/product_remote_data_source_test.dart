@@ -8,20 +8,17 @@ import 'package:ecommerce_app/features/product/data/models/Product_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:http/http.dart' as http;
 
 import 'product_remote_data_source_test.mocks.dart';
 
-
-
-@GenerateMocks([http.Client])
+@GenerateMocks([HttpClient])
 void main() {
-  late MockClient mockHttpClient;
+  late MockHttpClient mockHttpClient;
   late ProductRemoteDataSourceImpl dataSource;
 
   setUp(() {
-    mockHttpClient = MockClient();
-    dataSource = ProductRemoteDataSourceImpl(mockHttpClient as HttpClient);
+    mockHttpClient = MockHttpClient();
+    dataSource = ProductRemoteDataSourceImpl(mockHttpClient);
   });
 
   const tProductModel = ProductModel(
@@ -33,20 +30,36 @@ void main() {
   );
   final tProductJson = tProductModel.toJson();
 
+  // Create a product with image path for upload tests
+  final tProductModelWithImage = ProductModel(
+    id: '1',
+    name: 'Test',
+    description: 'desc',
+    imageURL: '/path/to/image.jpg', // Local path for upload
+    price: 99.99,
+  );
+
   group('getAllProducts', () {
     test('should return List<Product> when response code is 200', () async {
-      when(mockHttpClient.get(Uri.parse(baseUrl), headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(json.encode([tProductJson]), 200));
+      when(mockHttpClient.get(productUrl))
+          .thenAnswer((_) async => HttpResponse(
+                statusCode: 200,
+                body: json.encode({'data': [tProductJson]}),
+              ));
 
       final result = await dataSource.getAllProducts();
 
       expect(result, isA<List<ProductModel>>());
-      verify(mockHttpClient.get(Uri.parse(baseUrl), headers: anyNamed('headers')));
+      expect(result.first, equals(tProductModel));
+      verify(mockHttpClient.get(productUrl));
     });
 
     test('should throw ServerException on non-200 response', () async {
-      when(mockHttpClient.get(Uri.parse(baseUrl), headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response('Something went wrong', 404));
+      when(mockHttpClient.get(productUrl))
+          .thenAnswer((_) async => HttpResponse(
+                statusCode: 404,
+                body: 'Not found',
+              ));
 
       expect(() => dataSource.getAllProducts(), throwsA(isA<ServerException>()));
     });
@@ -54,78 +67,154 @@ void main() {
 
   group('getProductById', () {
     test('should return ProductModel when response code is 200', () async {
-      when(mockHttpClient.get(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(json.encode(tProductJson), 200));
+      when(mockHttpClient.get('$productUrl/1'))
+          .thenAnswer((_) async => HttpResponse(
+                statusCode: 200,
+                body: json.encode({'data': tProductJson}),
+              ));
 
       final result = await dataSource.getProductById('1');
 
-      expect(result, isA<ProductModel>());
-      verify(mockHttpClient.get(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')));
+      expect(result, equals(tProductModel));
+      verify(mockHttpClient.get('$productUrl/1'));
     });
 
     test('should throw ServerException on non-200 response', () async {
-      when(mockHttpClient.get(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response('Not found', 404));
+      when(mockHttpClient.get('$productUrl/1'))
+          .thenAnswer((_) async => HttpResponse(
+                statusCode: 404,
+                body: 'Not found',
+              ));
 
       expect(() => dataSource.getProductById('1'), throwsA(isA<ServerException>()));
     });
   });
 
   group('createProduct', () {
-    test('should complete successfully on 201/200 response', () async {
-      when(mockHttpClient.post(Uri.parse(baseUrl),
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response('', 201));
+    test('should complete successfully on 201 response (without image)', () async {
+      when(mockHttpClient.post(
+        productUrl,
+        any,
+      )).thenAnswer((_) async => HttpResponse(
+            statusCode: 201,
+            body: '',
+          ));
 
       await dataSource.createProduct(tProductModel);
 
-      verify(mockHttpClient.post(Uri.parse(baseUrl),
-          headers: anyNamed('headers'), body: json.encode(tProductModel.toJson())));
+      verify(mockHttpClient.post(
+        productUrl,
+        tProductModel.toJson(),
+      ));
+    });
+
+    test('should complete successfully on 200 response (with image)', () async {
+      when(mockHttpClient.uploadFile(
+        productUrl,
+        HttpMethod.post,
+        any,
+        any,
+      )).thenAnswer((_) async => HttpResponse(statusCode: 200, body: ''));
+
+      await dataSource.createProduct(tProductModelWithImage);
+
+      verify(mockHttpClient.uploadFile(
+        productUrl,
+        HttpMethod.post,
+        {
+          'name': tProductModelWithImage.name,
+          'description': tProductModelWithImage.description,
+          'price': tProductModelWithImage.price.toString(),
+        },
+        [UploadFile(key: 'image', path: tProductModelWithImage.imageURL)],
+      ));
     });
 
     test('should throw ServerException on failure', () async {
-      when(mockHttpClient.post(Uri.parse(baseUrl),
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response('Bad Request', 400));
+      when(mockHttpClient.post(
+        productUrl,
+        any,
+      )).thenAnswer((_) async => HttpResponse(
+            statusCode: 400,
+            body: 'Bad request',
+          ));
 
       expect(() => dataSource.createProduct(tProductModel), throwsA(isA<ServerException>()));
     });
   });
 
   group('updateProduct', () {
-    test('should complete successfully on 200/204 response', () async {
-      when(mockHttpClient.put(Uri.parse('$baseUrl/1'),
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response('', 200));
+    test('should complete successfully on 200 response (without new image)', () async {
+      when(mockHttpClient.put(
+        '$productUrl/1',
+        any,
+      )).thenAnswer((_) async => HttpResponse(
+            statusCode: 200,
+            body: '',
+          ));
 
       await dataSource.updateProduct(tProductModel);
 
-      verify(mockHttpClient.put(Uri.parse('$baseUrl/1'),
-          headers: anyNamed('headers'), body: json.encode(tProductModel.toJson())));
+      verify(mockHttpClient.put(
+        '$productUrl/1',
+        tProductModel.toJson(),
+      ));
+    });
+
+    test('should complete successfully on 204 response (with new image)', () async {
+      when(mockHttpClient.uploadFile(
+        '$productUrl/1',
+        HttpMethod.put,
+        any,
+        any,
+      )).thenAnswer((_) async => HttpResponse(statusCode: 204, body: ''));
+
+      await dataSource.updateProduct(tProductModelWithImage);
+
+      verify(mockHttpClient.uploadFile(
+        '$productUrl/1',
+        HttpMethod.put,
+        {
+          'name': tProductModelWithImage.name,
+          'description': tProductModelWithImage.description,
+          'price': tProductModelWithImage.price.toString(),
+        },
+        [UploadFile(key: 'image', path: tProductModelWithImage.imageURL)],
+      ));
     });
 
     test('should throw ServerException on failure', () async {
-      when(mockHttpClient.put(Uri.parse('$baseUrl/1'),
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response('Error', 500));
+      when(mockHttpClient.put(
+        '$productUrl/1',
+        any,
+      )).thenAnswer((_) async => HttpResponse(
+            statusCode: 500,
+            body: 'Server error',
+          ));
 
       expect(() => dataSource.updateProduct(tProductModel), throwsA(isA<ServerException>()));
     });
   });
 
   group('deleteProduct', () {
-    test('should complete successfully on 200/204 response', () async {
-      when(mockHttpClient.delete(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response('', 204));
+    test('should complete successfully on 204 response', () async {
+      when(mockHttpClient.delete('$productUrl/1'))
+          .thenAnswer((_) async => HttpResponse(
+                statusCode: 204,
+                body: '',
+              ));
 
       await dataSource.deleteProduct('1');
 
-      verify(mockHttpClient.delete(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')));
+      verify(mockHttpClient.delete('$productUrl/1'));
     });
 
     test('should throw ServerException on failure', () async {
-      when(mockHttpClient.delete(Uri.parse('$baseUrl/1'), headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response('Not allowed', 403));
+      when(mockHttpClient.delete('$productUrl/1'))
+          .thenAnswer((_) async => HttpResponse(
+                statusCode: 403,
+                body: 'Forbidden',
+              ));
 
       expect(() => dataSource.deleteProduct('1'), throwsA(isA<ServerException>()));
     });

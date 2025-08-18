@@ -1,10 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:ecommerce_app/core/presentation/routes/routes.dart';
 import 'package:ecommerce_app/features/auth/presentation/bloc/auth_bloc.dart';
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,16 +13,21 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  late Timer _timer;
+
   @override
   void initState() {
     super.initState();
-    // Trigger auth check
-    // context.read<AuthBloc>().add(AuthLoadRequested());
-    Future.delayed(const Duration(seconds: 12), () {
-    if (!mounted) return;
-    context.read<AuthBloc>().add(AuthLoadRequested());
-  });
+    _timer = Timer(const Duration(seconds: 12), () {
+      if (!mounted) return;
+      context.read<AuthBloc>().add(AuthLoadRequested());
+    });
+  }
 
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -37,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
             context.go(Routes.login);
           }
         },
-        child:Stack(
+        child: Stack(
           fit: StackFit.expand,
           children: [
             // Background image
@@ -89,7 +93,6 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ],
         ),
-
       ),
     );
   }

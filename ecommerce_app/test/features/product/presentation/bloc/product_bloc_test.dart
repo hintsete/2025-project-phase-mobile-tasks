@@ -1,10 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
+import 'package:ecommerce_app/core/error/failure.dart';
 import 'package:ecommerce_app/core/network/http.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:ecommerce_app/features/product/domain/entities/product.dart';
 import 'package:ecommerce_app/features/product/domain/usecases/create_product_usecase.dart';
 import 'package:ecommerce_app/features/product/domain/usecases/delete_product_usecase.dart';
@@ -12,7 +9,9 @@ import 'package:ecommerce_app/features/product/domain/usecases/update_product_us
 import 'package:ecommerce_app/features/product/domain/usecases/view_all_products_usecase.dart';
 import 'package:ecommerce_app/features/product/domain/usecases/view_specific_product_usecase.dart';
 import 'package:ecommerce_app/features/product/presentation/bloc/product_bloc_bloc.dart';
-import 'package:ecommerce_app/core/error/failure.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 import 'product_bloc_test.mocks.dart';
 
@@ -22,7 +21,7 @@ import 'product_bloc_test.mocks.dart';
   UpdateProductUseCase,
   ViewAllProductsUseCase,
   ViewSpecificProductUseCase,
-  HttpClient
+  HttpClient,
 ])
 void main() {
   late ProductBlocBloc bloc;
@@ -31,6 +30,7 @@ void main() {
   late MockUpdateProductUseCase mockUpdate;
   late MockViewAllProductsUseCase mockFetchAll;
   late MockViewSpecificProductUseCase mockFetchSingle;
+  late MockHttpClient mockHttpClient;
 
   setUp(() {
     mockCreate = MockCreateProductUseCase();
@@ -38,7 +38,7 @@ void main() {
     mockUpdate = MockUpdateProductUseCase();
     mockFetchAll = MockViewAllProductsUseCase();
     mockFetchSingle = MockViewSpecificProductUseCase();
-    mockHttp=MockHttpClient();
+    mockHttpClient = MockHttpClient();
 
     bloc = ProductBlocBloc(
       mockCreate,
@@ -46,7 +46,7 @@ void main() {
       mockUpdate,
       mockFetchAll,
       mockFetchSingle,
-      mockHttp
+      mockHttpClient,
     );
   });
 
@@ -69,7 +69,7 @@ void main() {
       },
       act: (bloc) => bloc.add(LoadAllProductsEvent()),
       expect: () => [
-        LoadingState(),
+        const LoadingState(),
         LoadedAllProductsState([tProduct]),
       ],
     );
@@ -82,7 +82,7 @@ void main() {
       },
       act: (bloc) => bloc.add(LoadAllProductsEvent()),
       expect: () => [
-        LoadingState(),
+        const LoadingState(),
         ErrorState(message: tFailure.message),
       ],
     );
@@ -97,7 +97,7 @@ void main() {
       },
       act: (bloc) => bloc.add(GetSingleProductEvent('1')),
       expect: () => [
-        LoadingState(),
+        const LoadingState(),
         LoadedSingleProductState(tProduct),
       ],
     );
@@ -110,7 +110,7 @@ void main() {
       },
       act: (bloc) => bloc.add(GetSingleProductEvent('1')),
       expect: () => [
-        LoadingState(),
+        const LoadingState(),
         ErrorState(message: tFailure.message),
       ],
     );
@@ -118,31 +118,28 @@ void main() {
 
   group('CreateProductEvent', () {
     blocTest<ProductBlocBloc, ProductBlocState>(
-  'emits [LoadingState, LoadingState, LoadedAllProductsState] when CreateProductEvent succeeds',
-  build: () {
-    when(mockCreate.call(any)).thenAnswer((_) async => const Right(null));
-    when(mockFetchAll.call(any)).thenAnswer((_) async => Right([tProduct]));
-    return ProductBlocBloc(
-      mockCreate,
-      mockDelete,
-      mockUpdate,
-      mockFetchAll,
-      mockFetchSingle,
-      mockHttp
+      'emits success flow when CreateProductEvent succeeds',
+      build: () {
+        when(mockCreate.call(any)).thenAnswer((_) async => const Right(null));
+        when(mockFetchAll.call(any)).thenAnswer((_) async => Right([tProduct]));
+        return ProductBlocBloc(
+          mockCreate,
+          mockDelete,
+          mockUpdate,
+          mockFetchAll,
+          mockFetchSingle,
+          mockHttpClient,
+        );
+      },
+      act: (bloc) => bloc.add(CreateProductEvent(tProduct)),
+      wait: const Duration(milliseconds: 50),
+      expect: () => [
+        const LoadingState(),
+        const SuccessState(message: 'Product created successfully'),
+        const LoadingState(),
+        LoadedAllProductsState([tProduct]),
+      ],
     );
-  },
-  act: (bloc) async {
-    bloc.add(CreateProductEvent(tProduct));
-    await Future.delayed(const Duration(milliseconds: 10));
-  },
-  wait: const Duration(milliseconds: 100),
-  expect: () => [
-    const LoadingState(),
-    
-    LoadedAllProductsState([tProduct]),
-  ],
-);
-
 
     blocTest<ProductBlocBloc, ProductBlocState>(
       'emits [LoadingState, ErrorState] on failure',
@@ -152,7 +149,7 @@ void main() {
       },
       act: (bloc) => bloc.add(CreateProductEvent(tProduct)),
       expect: () => [
-        LoadingState(),
+        const LoadingState(),
         ErrorState(message: tFailure.message),
       ],
     );
@@ -160,31 +157,28 @@ void main() {
 
   group('UpdateProductEvent', () {
     blocTest<ProductBlocBloc, ProductBlocState>(
-  'emits [LoadingState, LoadingState, LoadedAllProductsState] when UpdateProductEvent succeeds',
-  build: () {
-    when(mockUpdate.call(any)).thenAnswer((_) async => const Right(null));
-    when(mockFetchAll.call(any)).thenAnswer((_) async => Right([tProduct]));
-    return ProductBlocBloc(
-      mockCreate,
-      mockDelete,
-      mockUpdate,
-      mockFetchAll,
-      mockFetchSingle,
-      mochHttp
+      'emits success flow when UpdateProductEvent succeeds',
+      build: () {
+        when(mockUpdate.call(any)).thenAnswer((_) async => const Right(null));
+        when(mockFetchAll.call(any)).thenAnswer((_) async => Right([tProduct]));
+        return ProductBlocBloc(
+          mockCreate,
+          mockDelete,
+          mockUpdate,
+          mockFetchAll,
+          mockFetchSingle,
+          mockHttpClient,
+        );
+      },
+      act: (bloc) => bloc.add(UpdateProductEvent(tProduct)),
+      wait: const Duration(milliseconds: 50),
+      expect: () => [
+        const LoadingState(),
+        const SuccessState(message: 'Product updated successfully'),
+        const LoadingState(),
+        LoadedAllProductsState([tProduct]),
+      ],
     );
-  },
-  act: (bloc) async {
-    bloc.add(UpdateProductEvent(tProduct));
-    await Future.delayed(const Duration(milliseconds: 10));
-  },
-  wait: const Duration(milliseconds: 100),
-  expect: () => [
-    const LoadingState(),
-    
-    LoadedAllProductsState([tProduct]),
-  ],
-);
-
 
     blocTest<ProductBlocBloc, ProductBlocState>(
       'emits [LoadingState, ErrorState] on failure',
@@ -194,82 +188,48 @@ void main() {
       },
       act: (bloc) => bloc.add(UpdateProductEvent(tProduct)),
       expect: () => [
-        LoadingState(),
+        const LoadingState(),
         ErrorState(message: tFailure.message),
       ],
     );
   });
 
-  // group('DeleteProductEvent', () {
-  //   blocTest<ProductBlocBloc, ProductBlocState>(
-  //     'emits [LoadingState, LoadingState, LoadedAllProductsState] on success',
-  //     build: () {
-  //       when(mockDelete.call(any)).thenAnswer((_) async => const Right(null));
-  //       when(mockFetchAll.call(any)).thenAnswer((_) async => Right([tProduct]));
-  //       return bloc;
-  //     },
-  //     act: (bloc) => bloc.add(DeleteProductEvent(1)),
-  //     expect: () => [
-  //       // const LoadingState(),               // for DeleteProductEvent
-  //       const LoadingState(),               // for LoadAllProductsEvent
-  //       LoadedAllProductsState([tProduct]),
-  //     ],
-  //   );
-
-  //   blocTest<ProductBlocBloc, ProductBlocState>(
-  //     'emits [LoadingState, ErrorState] on failure',
-  //     build: () {
-  //       when(mockDelete.call(any)).thenAnswer((_) async => Left(tFailure));
-  //       return bloc;
-  //     },
-  //     act: (bloc) => bloc.add(DeleteProductEvent(1)),
-  //     expect: () => [
-  //       LoadingState(),
-  //       ErrorState(message: tFailure.message),
-  //     ],
-  //   );
-  // });
   group('DeleteProductEvent', () {
-  blocTest<ProductBlocBloc, ProductBlocState>(
-  'emits [LoadingState, LoadingState, LoadedAllProductsState] when DeleteProductEvent succeeds',
-  build: () {
-    when(mockDelete.call(any)).thenAnswer((_) async => const Right(null));
-    when(mockFetchAll.call(any)).thenAnswer((_) async => Right([tProduct]));
-    return ProductBlocBloc(
-      mockCreate,
-      mockDelete,
-      mockUpdate,
-      mockFetchAll,
-      mockFetchSingle,
-      mockHttp,
+    blocTest<ProductBlocBloc, ProductBlocState>(
+      'emits success flow when DeleteProductEvent succeeds',
+      build: () {
+        when(mockDelete.call(any)).thenAnswer((_) async => const Right(null));
+        when(mockFetchAll.call(any)).thenAnswer((_) async => Right([tProduct]));
+        return ProductBlocBloc(
+          mockCreate,
+          mockDelete,
+          mockUpdate,
+          mockFetchAll,
+          mockFetchSingle,
+          mockHttpClient,
+        );
+      },
+      act: (bloc) => bloc.add(DeleteProductEvent('1')),
+      wait: const Duration(milliseconds: 50),
+      expect: () => [
+        const LoadingState(),
+        const SuccessState(message: 'Product deleted successfully'),
+        const LoadingState(),
+        LoadedAllProductsState([tProduct]),
+      ],
     );
-  },
-  act: (bloc) async {
-    bloc.add(DeleteProductEvent('1'));
-    await Future.delayed(const Duration(milliseconds: 10)); // give time for LoadAllProductsEvent to be added
-  },
-  wait: const Duration(milliseconds: 100), // allow chained events to emit
-  expect: () => [
-    const LoadingState(),               // from DeleteProductEvent
-                   // from LoadAllProductsEvent triggered inside
-    LoadedAllProductsState([tProduct]), // final state after fetching all products
-  ],
-);
 
-
-
-  blocTest<ProductBlocBloc, ProductBlocState>(
-    'emits [LoadingState, ErrorState] on failure',
-    build: () {
-      when(mockDelete.call(any)).thenAnswer((_) async => Left(tFailure));
-      return bloc;
-    },
-    act: (bloc) => bloc.add(DeleteProductEvent('1')),
-    expect: () => [
-      const LoadingState(), // this should be const
-      ErrorState(message: tFailure.message), // not const since tFailure is runtime
-    ],
-  );
-});
-
+    blocTest<ProductBlocBloc, ProductBlocState>(
+      'emits [LoadingState, ErrorState] on failure',
+      build: () {
+        when(mockDelete.call(any)).thenAnswer((_) async => Left(tFailure));
+        return bloc;
+      },
+      act: (bloc) => bloc.add(DeleteProductEvent('1')),
+      expect: () => [
+        const LoadingState(),
+        ErrorState(message: tFailure.message),
+      ],
+    );
+  });
 }
